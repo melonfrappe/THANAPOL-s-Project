@@ -70,38 +70,11 @@ public class BookController : MonoBehaviour {
 		print (Application.dataPath);
 		print (Application.persistentDataPath);
 		#region TESTING_ZONE
-		//Test the new structure of json file
-//		BookDataCatalog [] bookDataCatalog = JsonHelper.getJsonArray<BookDataCatalog>(File.ReadAllText(Path.Combine(Application.streamingAssetsPath,"BookDataCatalog.json")));
-//		BookDataCatalogLength = bookDataCatalog[0].bookPage.Length;
-//		book.bookPages = new Sprite[BookDataCatalogLength];
-//		url = new string[BookDataCatalogLength];
-//		for(int i=0;i<BookDataCatalogLength;i++){
-//			url [i]=bookDataCatalog[0].bookPage[i].bookPageImage;
-//		}
-//		StartCoroutine(LoadData());
+		//JsonTesting();
+		//StartCoroutine(LoadData());
 		#endregion
 		//JsonHelper ,Solution to convert json file to array object
-		string filePath = Path.Combine(GetStreamingPath(),"BookCatalog.json");
-		string dataAsJson = GetDataAsJson (filePath);
-		BookCatalog [] bookCatalog = JsonHelper.getJsonArray<BookCatalog>(dataAsJson);
-
-		//Set them size after json file is read
-		BookCatalogLength = bookCatalog.Length;
-		coverImage = new Sprite[bookCatalog.Length];
-		openingBookImage = new Sprite[bookCatalog.Length];
-		book.PageBGImage = new Sprite[bookCatalog.Length];
-		snapPoint = new float[bookCatalog.Length];
-
-		//Set them values after them size is set
-		for(int i=0;i<bookCatalog.Length;i++){
-			string coverPath = "AlphabetBook/"+bookCatalog[i].CoverImageName;
-			coverImage [i] = Resources.Load<Sprite> (coverPath);
-			string openingBookPath = "AlphabetBook/"+bookCatalog[i].OpeningBookImageName;
-			openingBookImage [i] = Resources.Load<Sprite> (openingBookPath);
-			string pageBGPath = "AlphabetBook/"+bookCatalog[i].PageBGImageName;
-			book.PageBGImage [i] = Resources.Load<Sprite> (pageBGPath);
-
-		}
+		GetDataFromJson();
 
 		//Calculate percentage of scroll view per object
 		percentage = 1.00f/(BookCatalogLength-1);
@@ -203,11 +176,44 @@ public class BookController : MonoBehaviour {
 	}
 
 	public string GetDataAsJson(string filePath){
-		#if UNITY_EDITOR
-		return File.ReadAllText(filePath);
-		#elif UNITY_ANDROID
-		return "not available now";
-		#endif
+		WWW reader = new WWW(filePath);
+		while(!reader.isDone){}
+		return reader.text;
+	}
 
+	void JsonTesting(){
+		//Test the new structure of json file
+		BookDataCatalog [] bookDataCatalog = JsonHelper.getJsonArray<BookDataCatalog>(File.ReadAllText(Path.Combine(Application.streamingAssetsPath,"BookDataCatalog.json")));
+		BookDataCatalogLength = bookDataCatalog[0].bookPage.Length;
+		book.bookPages = new Sprite[BookDataCatalogLength];
+		url = new string[BookDataCatalogLength];
+		for(int i=0;i<BookDataCatalogLength;i++){
+			url [i]=bookDataCatalog[0].bookPage[i].bookPageImage;
+		}
+	}
+
+	void GetDataFromJson(){
+		//Set path
+		string filePath = Path.Combine(GetStreamingPath(),"BookCatalog.json");
+		string dataAsJson = GetDataAsJson (filePath);
+		BookCatalog [] bookCatalog = JsonHelper.getJsonArray<BookCatalog>(dataAsJson);
+
+		//Set them size after json file is read
+		BookCatalogLength = bookCatalog.Length;
+		coverImage = new Sprite[bookCatalog.Length];
+		openingBookImage = new Sprite[bookCatalog.Length];
+		book.PageBGImage = new Sprite[bookCatalog.Length];
+		snapPoint = new float[bookCatalog.Length];
+
+		//Set them values after them size is set
+		for(int i=0;i<bookCatalog.Length;i++){
+			string coverPath = "AlphabetBook/"+bookCatalog[i].CoverImageName;
+			coverImage [i] = Resources.Load<Sprite> (coverPath);
+			string openingBookPath = "AlphabetBook/"+bookCatalog[i].OpeningBookImageName;
+			openingBookImage [i] = Resources.Load<Sprite> (openingBookPath);
+			string pageBGPath = "AlphabetBook/"+bookCatalog[i].PageBGImageName;
+			book.PageBGImage [i] = Resources.Load<Sprite> (pageBGPath);
+
+		}
 	}
 }
