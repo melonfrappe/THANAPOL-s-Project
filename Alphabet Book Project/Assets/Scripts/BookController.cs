@@ -4,7 +4,24 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.IO;
-
+#region TESTING_ZONE
+[System.Serializable]
+public class BookDataCatalog {
+	public string bookColor;
+	public OnBookCover onBookCover;
+	public BookPage [] bookPage;
+}
+[System.Serializable]
+public class BookPage{
+	public string bookPageImage;
+	public string bookContent;
+}
+[System.Serializable]
+public class OnBookCover{
+	public string bookCoverImage;
+	public string bookTitle;
+}
+#endregion
 public enum Alphabet{
 	A,B,C,D,E,F,G,H,
 	I,J,K,L,M,N,O,P,
@@ -39,7 +56,7 @@ public class BookController : MonoBehaviour {
 	[SerializeField] CloningComponent cloningComponent;
 	[SerializeField] GameObject barrier;
 
-	public int CurrentBookIndex,CloningIndexCounter,BookCatalogLength;
+	public int CurrentBookIndex,CloningIndexCounter,BookCatalogLength,BookDataCatalogLength;
 
 	Vector2 beforeSnapPos,afterSnapPos;
 	Sprite[] coverImage;
@@ -47,12 +64,25 @@ public class BookController : MonoBehaviour {
 	float[] snapPoint;
 	float percentage;
 	List<Sprite> _bookPage = new List<Sprite>();
-
+	Sprite []tmpSprite;
+	string [] url;
 	void Start () {
-
+		print (Application.dataPath);
+		print (Application.persistentDataPath);
+		#region TESTING_ZONE
+		//Test the new structure of json file
+//		BookDataCatalog [] bookDataCatalog = JsonHelper.getJsonArray<BookDataCatalog>(File.ReadAllText(Path.Combine(Application.streamingAssetsPath,"BookDataCatalog.json")));
+//		BookDataCatalogLength = bookDataCatalog[0].bookPage.Length;
+//		book.bookPages = new Sprite[BookDataCatalogLength];
+//		url = new string[BookDataCatalogLength];
+//		for(int i=0;i<BookDataCatalogLength;i++){
+//			url [i]=bookDataCatalog[0].bookPage[i].bookPageImage;
+//		}
+//		StartCoroutine(LoadData());
+		#endregion
 		//JsonHelper ,Solution to convert json file to array object
-		string filePath = Path.Combine(Application.streamingAssetsPath,gameDataFileName);
-		string dataAsJson = File.ReadAllText(filePath);
+		string filePath = Path.Combine(GetStreamingPath(),"BookCatalog.json");
+		string dataAsJson = GetDataAsJson (filePath);
 		BookCatalog [] bookCatalog = JsonHelper.getJsonArray<BookCatalog>(dataAsJson);
 
 		//Set them size after json file is read
@@ -70,6 +100,7 @@ public class BookController : MonoBehaviour {
 			openingBookImage [i] = Resources.Load<Sprite> (openingBookPath);
 			string pageBGPath = "AlphabetBook/"+bookCatalog[i].PageBGImageName;
 			book.PageBGImage [i] = Resources.Load<Sprite> (pageBGPath);
+
 		}
 
 		//Calculate percentage of scroll view per object
@@ -93,7 +124,7 @@ public class BookController : MonoBehaviour {
 			muteButton.gameObject.SetActive(false);
 			barrier.gameObject.SetActive (false);
 			openingBook.gameObject.SetActive(false);
-			content.transform.GetChild(CurrentBookIndex).transform.TweenTranfrom(Siri.Ttype.Scale, Easing.Type.EaseOutBounce, new Vector3 (1.1f, 1.1f, 1), new Vector3 (1f, 1f, 1), 0.75f);
+			//content.transform.GetChild(CurrentBookIndex).transform.TweenTranfrom(Siri.Ttype.Scale, Easing.Type.EaseOutBounce, new Vector3 (1.1f, 1.1f, 1), new Vector3 (1f, 1f, 1), 0.75f);
 		});
 
 	}
@@ -153,4 +184,30 @@ public class BookController : MonoBehaviour {
 		book.LoadPage ((Alphabet)CurrentBookIndex);
 	}
 
+	IEnumerator LoadData(){
+		for(int i=0;i<BookDataCatalogLength;i++){
+			WWW www = new WWW(url[i]);
+			yield return www;
+			book.bookPages[i] = Sprite.Create(www.texture, new Rect(0, 0, www.texture.width,www.texture.height), new Vector2(0, 0));
+			print ("Book page #"+i+" is loaded");
+			if(i==BookDataCatalogLength-1)
+				print ("Complete");
+		}
+	}
+	public string GetStreamingPath(){
+		#if UNITY_EDITOR
+		return Application.streamingAssetsPath;
+		#elif UNITY_ANDROID
+		return "jar:file://" + Application.dataPath + "!/assets/";
+		#endif
+	}
+
+	public string GetDataAsJson(string filePath){
+		#if UNITY_EDITOR
+		return File.ReadAllText(filePath);
+		#elif UNITY_ANDROID
+		return "not available now";
+		#endif
+
+	}
 }

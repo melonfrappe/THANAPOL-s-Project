@@ -351,7 +351,7 @@ public class Book : MonoBehaviour {
 		page.sprite=(currentPage>=0 &&currentPage<bookPages.Length) ? bookPages[currentPage] : background;
 
 		if(currentPage!=0)
-			pageL.sprite=(currentPage>=0 &&currentPage<bookPages.Length) ? bookPages[currentPage-1] : background;
+			pageL.sprite=(currentPage>=0 &&currentPage<=bookPages.Length) ? bookPages[currentPage-1] : background;
 
 		#endregion
 	}
