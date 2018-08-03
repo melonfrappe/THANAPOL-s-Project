@@ -12,12 +12,10 @@ public enum FlipMode
 [ExecuteInEditMode]
 public class Book : MonoBehaviour {
 	#region ADDING_VARIABLES
-	public Sprite[] PageBGImage;
-	[SerializeField] Image pageBG;
-	[SerializeField] Image pageBGL;
 	[SerializeField] Image page;
 	[SerializeField] Image pageL;
 	[SerializeField] Sprite blankPage;
+	[SerializeField] GameObject backButton;
 	#endregion
 
     public Canvas canvas;
@@ -245,11 +243,16 @@ public class Book : MonoBehaviour {
     }
     public void DragRightPageToPoint(Vector3 point)
     {
-        if (currentPage >= bookPages.Length) return;
+		#region DEFAULT=bookPages.Lenth
+		if (currentPage >= bookPages.Length-1){ 
+			print("Can't open to next");
+			backButton.transform.TweenTranfrom(Siri.Ttype.Scale,Easing.Type.EaseOutBounce,new Vector3(1,1,1),new Vector3(1.1f,1.1f,1),0.25f);
+			return;
+		}
+		#endregion
         pageDragging = true;
         mode = FlipMode.RightToLeft;
         f = point;
-
 
         NextPageClip.rectTransform.pivot = new Vector2(0, 0.12f);
         ClippingPlane.rectTransform.pivot = new Vector2(1, 0.35f);
@@ -269,7 +272,7 @@ public class Book : MonoBehaviour {
 		Right.sprite = blankPage;
 //        RightNext.sprite = (currentPage < bookPages.Length - 1) ? bookPages[currentPage + 1] : background;
 		page.sprite= (currentPage < bookPages.Length - 1) ? bookPages[currentPage + 1] : background;
-		pageL.sprite= (currentPage < bookPages.Length - 1) ? bookPages[currentPage] : background;
+		pageL.sprite= (currentPage <= bookPages.Length - 1) ? bookPages[currentPage] : background;
 
 		#endregion
         LeftNext.transform.SetAsFirstSibling();
@@ -434,12 +437,7 @@ public class Book : MonoBehaviour {
             onFinish();
     }
 
-	#region ADDING_METHOD_LOAD_PAGE_BG
-	public void LoadPage(Alphabet currentIndex){
-		pageBG.sprite = PageBGImage[(int)currentIndex];
-		pageBGL.sprite = PageBGImage[(int)currentIndex];
-	}
-
+	#region ADDING_METHOD
     public void ResetCurrentPage(){
         currentPage = 0;
     }

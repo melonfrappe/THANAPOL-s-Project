@@ -42,6 +42,7 @@ public class JsonHelper
 		public T[] array;
 	}
 }
+
 public class BookController : MonoBehaviour {
 	
 	[SerializeField] string gameDataFileName = "BookData.json";
@@ -54,20 +55,19 @@ public class BookController : MonoBehaviour {
 	[SerializeField] Book book;
 	[SerializeField] CloningComponent cloningComponent;
 	[SerializeField] GameObject barrier;
-
+	[SerializeField] ImageDownloader imageDownloader;
 	public int CurrentBookIndex,CloningIndexCounter,MaxCloningCoverInScene = 5,BookPageLength;
-
-	ImageDownloader imageDownloader;
 	Vector2 beforeSnapPos,afterSnapPos;
 	float[] snapPoint;
 	float percentage;
-	List<Sprite> _bookPage = new List<Sprite>();
+	string dir;
+	List<Sprite> tmpBookPage = new List<Sprite> ();
 	void Start () {
-		imageDownloader = new ImageDownloader ();
-		//Test WWW class to read json file
+		//Close the book when play
+		openingBook.gameObject.SetActive(false);
+		//Debug
 		print (Application.dataPath);
 		print (Application.persistentDataPath);
-		//Initiate to get data from Json
 
 		//Calculate percentage of scroll view per object
 		snapPoint = new float[MaxCloningCoverInScene];
@@ -86,7 +86,6 @@ public class BookController : MonoBehaviour {
 
 		//Add listener		
 		backButton.onClick.AddListener(()=>{
-			_bookPage.Clear();
 			muteButton.gameObject.SetActive(false);
 			barrier.gameObject.SetActive (false);
 			openingBook.gameObject.SetActive(false);
@@ -96,6 +95,30 @@ public class BookController : MonoBehaviour {
 	void Update () {
 		SnapToNeasrestPoint();
 		TweenInAndOut ();
+		if(imageDownloader.AvailToOpen){
+			
+			//Open the book
+			openingBook.gameObject.SetActive (true);
+			//Update before open
+			book.UpdateSprites ();
+			//Use temporary sprite
+			if (imageDownloader.IndexIsLoaded == CurrentBookIndex && imageDownloader.IsFirstDownloading ) {
+				UseTmpBookPage ();
+			}
+			imageDownloader.AvailToOpen = false;
+		}
+
+		else if(imageDownloader.Counter == BookPageLength && BookPageLength !=0){
+			//Let the book appears
+			openingBook.gameObject.SetActive (true);
+			//Update before open
+			book.UpdateSprites ();
+			imageDownloader.Counter = 0;
+		}
+
+		if(Input.GetKey(KeyCode.Space)){
+			book.UpdateSprites ();
+		}
 	}
 
 	void SnapToNeasrestPoint(){
@@ -115,18 +138,23 @@ public class BookController : MonoBehaviour {
 	}
 
 	public void OpenTheBook(){
-		GetData ();
-		muteButton.gameObject.SetActive (true);
-		barrier.gameObject.SetActive (true);
-		LoadPageController ();
-		book.ResetCurrentPage ();
-		openingBook.gameObject.SetActive (true);
+		//Update book pages
 		book.UpdateSprites ();
-		openingBook.transform.TweenTranfrom (Siri.Ttype.Scale, Easing.Type.EaseOutBounce, new Vector3 (1, 1, 1), new Vector3 (1.1f, 1.1f, 1), 0.75f);
+		//Initiate to first download of the book is clicked
+		GetDataFromJson ();
+		//Set mute button to appears
+		muteButton.gameObject.SetActive (true);
+		//To blur bg
+		barrier.gameObject.SetActive (true);
+		//Load the book page which had been download in local before the book open
+		LoadPageController ();
+		//Reset to 1st page before open each book
+		book.ResetCurrentPage ();
+		//Snap to prev/next book when the book is cliked not be mid. of display
 		SnapToPrevNext(CurrentBookIndex);
 
 	}
-	//Tween In and Out when the book is scrolling thru focus point of display.
+	//Tween In and Out when the book is scrolling thru mid. of display.
 	void TweenInAndOut(){
 		for (int i=0;i < MaxCloningCoverInScene ;i++){
 			float tmpScale = 1.00f - Mathf.Abs(snapPoint[i] - scrollRect.horizontalNormalizedPosition);
@@ -135,16 +163,9 @@ public class BookController : MonoBehaviour {
 	}
 
 	void LoadPageController(){
-//		for(int i=0;;i++){
-//			_bookPage.Add (Resources.Load<Sprite>((Alphabet)CurrentBookIndex+"/"+i));
-//			if (_bookPage [i] == null) {
-//				_bookPage.Remove (_bookPage[i]);
-//				break;
-//			}
-//		}
-		book.bookPages = new Sprite[BookPageLength];
+		
 		for(int i=0;i<BookPageLength;i++){
-			book.bookPages [i] = Sprite.Create(Resources.Load<Texture2D>((Alphabet)CurrentBookIndex+"/"+i),new Rect(0,0,512f,384f),new Vector2(0,0));
+			book.bookPages [i] = Sprite.Create(Resources.Load<Texture2D>(dir+"/"+i),new Rect(0,0,512f,512f),new Vector2(0,0));
 		}
 	}
 		
@@ -155,25 +176,49 @@ public class BookController : MonoBehaviour {
 		return "jar:file://" + Application.dataPath + "!/assets/";
 		#endif
 	}
-	//Now is not avail because something that I dont know... :(
+
+	//Now is not avail. in Unity 2017.2.0f3 and lower
 	public string GetDataAsJson(string filePath){
 		WWW reader = new WWW(filePath);
 		while(!reader.isDone){}
 		return reader.text;
 	}
-
-	void GetData(){
+		
+	void GetDataFromJson(){
 		//Test the new structure of json file
 		string filePath = Path.Combine(GetStreamingPath(),gameDataFileName);
-		string dataAsJson = File.ReadAllText(filePath);
+		string dataAsJson = ReadJsonToString(filePath);
+		//Map json file to object in project
 		BookData [] bookData = JsonHelper.getJsonArray<BookData>(dataAsJson);
 		BookPageLength = bookData [CurrentBookIndex].pageLength;
+
+		//Set array size
+		book.bookPages = new Sprite[BookPageLength];
 		string [] url = new string[bookData[CurrentBookIndex].pageLength];
-		string dir = bookData[CurrentBookIndex].onBookCover.bookTitle;
+		dir = bookData[CurrentBookIndex].onBookCover.bookTitle;
+		//First dir creating
 		imageDownloader.CreateDirectory (dir);
+		//Pull url from object to image downloader
 		for(int i=0;i<bookData[CurrentBookIndex].pageLength;i++){
 			url [i]=bookData[CurrentBookIndex].bookPage[i].bookPageImage;
-			StartCoroutine( imageDownloader.Loader (url[i],dir,i));
+			StartCoroutine(imageDownloader.Loader (url[i],dir,i,LoadingIsCompleted,CurrentBookIndex));
 		}
+	}
+
+	private void LoadingIsCompleted(int index,Sprite spr)
+	{
+		book.bookPages [index] = spr;
+		tmpBookPage.Add (spr);
+	}
+	public string ReadJsonToString(string fileName){
+		using (StreamReader reader = new StreamReader(Path.Combine(GetStreamingPath(),fileName)))
+		{
+			return reader.ReadToEnd ();
+		}
+	}
+
+	void UseTmpBookPage(){
+		for(int i=0;i<BookPageLength;i++)
+			book.bookPages [i] = tmpBookPage [i];
 	}
 }
