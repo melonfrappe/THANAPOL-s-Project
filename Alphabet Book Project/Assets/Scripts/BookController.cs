@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.IO;
+using UnityEditor;
+
 [System.Serializable]
 public class BookData {
 	public string bookColor;
@@ -70,7 +72,7 @@ public class BookController : MonoBehaviour {
 		BookPageLength = new int[MaxPageLengthEachBook];
 		//Test the new structure of json file
 		string filePath = Path.Combine(GetStreamingPath(),gameDataFileName);
-		string dataAsJson = GetDataAsJson(filePath);
+		string dataAsJson = ReadJsonToString(filePath);
 		print(dataAsJson);
 		//Map json file to object in project
 		bookData = JsonHelper.getJsonArray<BookData>(dataAsJson);
@@ -117,24 +119,16 @@ public class BookController : MonoBehaviour {
 	void Update () {
 		SnapToNeasrestPoint();
 		TweenInAndOut ();
-		if(imageDownloader.AlreadyExists){
-			//Open the book
-			openingBook.gameObject.SetActive (true);
-			//Use temporary sprite
-			if (content.transform.GetChild(CurrentBookIndex).GetComponent<CloningComponent>().IsFirstDownloading ) {
-				UseTmpBookPage ();
-			}
-			//Update before open
-			book.UpdateSprites ();
-			
-			imageDownloader.AlreadyExists = false;
-		}
-		else if(imageDownloader.Counter == BookPageLength[CurrentBookIndex] && BookPageLength[CurrentBookIndex] !=0){
+		if(imageDownloader.Counter == BookPageLength[CurrentBookIndex] && BookPageLength[CurrentBookIndex] !=0){
 			//Let the book appears
 			openingBook.gameObject.SetActive (true);
 			//Update before open
 			book.UpdateSprites ();
 			imageDownloader.Counter = 0;
+		}
+
+		if(Input.GetKey(KeyCode.Space)){
+			AssetDatabase.Refresh ();
 		}
 	}
 
@@ -158,15 +152,13 @@ public class BookController : MonoBehaviour {
 		content.GetComponent<RectTransform> ().TweenRectTrans (Siri.Rtype.LocalPosition,Easing.Type.EaseOutQuad,beforeSnapPos,afterSnapPos,0.25f);
 	}
 
-	public void OpenTheBook(){
+	public void OpenBook(){
 		//Initiate to first download of selected book is clicked
 		LoadSelectedBook ();
 		//Set mute button to appears
 		muteButton.gameObject.SetActive (true);
 		//To blur bg
 		barrier.gameObject.SetActive (true);
-		//Load the book page which had been download in local before the book open
-		LoadPageController ();
 		//Reset to 1st page before open each book
 		book.ResetCurrentPage ();
 		//Snap to prev/next book when the book is cliked not be mid. of display
@@ -180,13 +172,6 @@ public class BookController : MonoBehaviour {
 			content.transform.GetChild(i).transform.localScale = new Vector3(tmpScale,tmpScale,1);
 		}
 	}
-
-	void LoadPageController(){
-		
-		for(int i=0;i<BookPageLength[CurrentBookIndex];i++){
-			book.bookPages [i] = Sprite.Create(Resources.Load<Texture2D>(curDir[CurrentBookIndex]+"/"+i),new Rect(0,0,512f,512f),new Vector2(0,0));
-		}
-	}
 		
 	public string GetStreamingPath(){
 		#if UNITY_EDITOR
@@ -196,7 +181,7 @@ public class BookController : MonoBehaviour {
 		#endif
 	}
 
-	//Now is not avail. in Unity 2017.2.0f3 and lower
+	//Now can't work in Unity 2017.2.0f3 and lower
 	public string GetDataAsJson(string filePath){
 		WWW reader = new WWW(filePath);
 		while(!reader.isDone){}
@@ -211,10 +196,10 @@ public class BookController : MonoBehaviour {
 		}
 	}
 
-	void UseTmpBookPage(){
-		for(int i=0;i<BookPageLength[CurrentBookIndex];i++)
-			book.bookPages [i] = content.transform.GetChild(CurrentBookIndex).GetComponent<CloningComponent>().tmpPage[i];
-	}
+//	void UseTmpBookPage(){
+//		for(int i=0;i<BookPageLength[CurrentBookIndex];i++)
+//			book.bookPages [i] = content.transform.GetChild(CurrentBookIndex).GetComponent<CloningComponent>().tmpPage[i];
+//	}
 	
 	void LoadingIsCompleted(int index,Sprite spr)
 		{

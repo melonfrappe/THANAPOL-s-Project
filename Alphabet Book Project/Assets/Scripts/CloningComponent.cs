@@ -7,7 +7,6 @@ public class CloningComponent : MonoBehaviour {
 
 	public int CloningIndex;
 	public List <Sprite> tmpPage = new List<Sprite>();
-	public bool IsFirstDownloading = false;
 	[SerializeField] Button cloningComponent;
 	[SerializeField] BookController bookController;
 	void Start(){
@@ -17,7 +16,7 @@ public class CloningComponent : MonoBehaviour {
 				bookController.CurrentBookIndex = this.CloningIndex;
 			}
 			else {
-				bookController.OpenTheBook();
+				bookController.OpenBook();
 			}
 		});
 	}
