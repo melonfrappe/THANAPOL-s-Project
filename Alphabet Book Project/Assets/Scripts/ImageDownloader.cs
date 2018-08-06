@@ -5,13 +5,14 @@ using System.IO;
 using System;
 
 public class ImageDownloader : MonoBehaviour {
-	public int Counter,IndexIsLoaded;
-	public bool AvailToOpen = false,IsFirstDownloading = false;
+	public int Counter;
+	public bool AlreadyExists = false;
+	[SerializeField] GameObject content;
 	public IEnumerator Loader (string url,string dirName,int fileName,Action<int,Sprite> callbackSuccess,int curIndex) {
 		
 		if(File.Exists(GetPlatformPath()+dirName+"/" + fileName +".png")){
 			//File does exist, can open
-			AvailToOpen = true;
+			AlreadyExists = true;
 
 			print("Loading from the device");
 			byte[] byteArray = File.ReadAllBytes(GetPlatformPath()+dirName+"/"  + fileName+".png");
@@ -20,8 +21,9 @@ public class ImageDownloader : MonoBehaviour {
 		}
 		else {
 			//File doesn't exist, need to download
-			IndexIsLoaded = curIndex;
-			IsFirstDownloading = true;
+
+			//Set flag in selected book (clone) that first time download
+			content.transform.GetChild(curIndex).GetComponent<CloningComponent>().IsFirstDownloading = true;
 			print("Downloading from the web");
 			WWW www = new WWW(url);
 			yield return www;
@@ -44,7 +46,7 @@ public class ImageDownloader : MonoBehaviour {
 
 	}
 
-	public static string GetPlatformPath(){
+	public string GetPlatformPath(){
 		#if UNITY_EDITOR
 		return Application.dataPath + "/Resources/";
 		#else
@@ -57,6 +59,23 @@ public class ImageDownloader : MonoBehaviour {
 			Directory.CreateDirectory (GetPlatformPath () + dirName);
 			print ("Path " + GetPlatformPath () + dirName + " is created");
 		} else
-			print ("Path  exist");
+			print ("Path does exist");
+	}
+
+	public void RemoveDirectory(string dirName){
+		if (Directory.Exists (GetPlatformPath () + dirName)) {
+			Directory.Delete (GetPlatformPath () + dirName);
+			print ("Path " + GetPlatformPath () + dirName + " is deleted");
+		} else
+			print ("Path doesn't exist");
+	}
+
+	public void DeleteFile(string dirName,int fileName){
+		if (File.Exists (GetPlatformPath () +dirName+"/"+ fileName+".png")) {
+			print ("Path " + GetPlatformPath () +dirName+"/" + fileName + " is deleted");
+			File.Delete (GetPlatformPath ()  +dirName+"/"+ fileName+".png");
+		
+		} else
+			print ("File doesn't exist");
 	}
 }

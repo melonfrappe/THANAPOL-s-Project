@@ -21,6 +21,7 @@ public class OnBookCover{
 	public string bookCoverImage;
 	public string bookTitle;
 }
+
 public enum Alphabet{
 	A,B,C,D,E,F,G,H,
 	I,J,K,L,M,N,O,P,
@@ -47,6 +48,7 @@ public class BookController : MonoBehaviour {
 	
 	[SerializeField] string gameDataFileName = "BookData.json";
 	[SerializeField] Button backButton;
+	[SerializeField] Button deleteButton;
 	[SerializeField] GameObject muteButton;
 	[SerializeField] GameObject coverBook;
 	[SerializeField] GameObject content;
@@ -56,13 +58,25 @@ public class BookController : MonoBehaviour {
 	[SerializeField] CloningComponent cloningComponent;
 	[SerializeField] GameObject barrier;
 	[SerializeField] ImageDownloader imageDownloader;
-	public int CurrentBookIndex,CloningIndexCounter,MaxCloningCoverInScene = 5,BookPageLength;
+	public int CurrentBookIndex,CloningIndexCounter,CloningInScene = 5,MaxPageLengthEachBook = 10;
+	public int [] BookPageLength;
 	Vector2 beforeSnapPos,afterSnapPos;
 	float[] snapPoint;
 	float percentage;
-	string dir;
-	List<Sprite> tmpBookPage = new List<Sprite> ();
+	string [] curDir;
+	public BookData [] bookData;
 	void Start () {
+		curDir = new string[CloningInScene];
+		BookPageLength = new int[MaxPageLengthEachBook];
+		//Test the new structure of json file
+		string filePath = Path.Combine(GetStreamingPath(),gameDataFileName);
+		string dataAsJson = GetDataAsJson(filePath);
+		print(dataAsJson);
+		//Map json file to object in project
+		bookData = JsonHelper.getJsonArray<BookData>(dataAsJson);
+		//Set each book page length
+		for(int i=0;i<bookData.Length;i++)
+			BookPageLength[i] = bookData [i].pageLength;
 		//Close the book when play
 		openingBook.gameObject.SetActive(false);
 		//Debug
@@ -70,14 +84,14 @@ public class BookController : MonoBehaviour {
 		print (Application.persistentDataPath);
 
 		//Calculate percentage of scroll view per object
-		snapPoint = new float[MaxCloningCoverInScene];
-		percentage = 1.00f/(MaxCloningCoverInScene-1);
-		for(int i=0;i<MaxCloningCoverInScene;i++){
+		snapPoint = new float[CloningInScene];
+		percentage = 1.00f/(CloningInScene-1);
+		for(int i=0;i<CloningInScene;i++){
 			snapPoint[i] = percentage*i;
 		}
 
 		//Cloning to content
-		for (int i=0;i<MaxCloningCoverInScene;i++){
+		for (int i=0;i<CloningInScene;i++){
 			CloningIndexCounter++;
 			GameObject clone = Instantiate(coverBook.gameObject,content.transform);
 			cloningComponent.CloningIndex = CloningIndexCounter;
@@ -91,39 +105,42 @@ public class BookController : MonoBehaviour {
 			openingBook.gameObject.SetActive(false);
 		});
 
+		deleteButton.onClick.AddListener(()=>{
+			for(int i=0;i<BookPageLength[CurrentBookIndex];i++){
+				imageDownloader.DeleteFile(curDir[CurrentBookIndex],i);
+			}
+			imageDownloader.RemoveDirectory(curDir[CurrentBookIndex]);
+			
+		});
+
 	}
 	void Update () {
 		SnapToNeasrestPoint();
 		TweenInAndOut ();
-		if(imageDownloader.AvailToOpen){
-			
+		if(imageDownloader.AlreadyExists){
 			//Open the book
 			openingBook.gameObject.SetActive (true);
-			//Update before open
-			book.UpdateSprites ();
 			//Use temporary sprite
-			if (imageDownloader.IndexIsLoaded == CurrentBookIndex && imageDownloader.IsFirstDownloading ) {
+			if (content.transform.GetChild(CurrentBookIndex).GetComponent<CloningComponent>().IsFirstDownloading ) {
 				UseTmpBookPage ();
 			}
-			imageDownloader.AvailToOpen = false;
+			//Update before open
+			book.UpdateSprites ();
+			
+			imageDownloader.AlreadyExists = false;
 		}
-
-		else if(imageDownloader.Counter == BookPageLength && BookPageLength !=0){
+		else if(imageDownloader.Counter == BookPageLength[CurrentBookIndex] && BookPageLength[CurrentBookIndex] !=0){
 			//Let the book appears
 			openingBook.gameObject.SetActive (true);
 			//Update before open
 			book.UpdateSprites ();
 			imageDownloader.Counter = 0;
 		}
-
-		if(Input.GetKey(KeyCode.Space)){
-			book.UpdateSprites ();
-		}
 	}
 
 	void SnapToNeasrestPoint(){
 		//Use 0.01f to check nearest because impossible to use absolute zero of delta
-		for (int i=0 ;i<MaxCloningCoverInScene ;i++)
+		for (int i=0 ;i<CloningInScene ;i++)
 			if(snapPoint[i] - scrollRect.horizontalNormalizedPosition > 0 && snapPoint[i] - scrollRect.horizontalNormalizedPosition < 0.01f){
 				scrollRect.horizontalNormalizedPosition = snapPoint[i];
 				CurrentBookIndex = i;
@@ -131,17 +148,19 @@ public class BookController : MonoBehaviour {
 	}
 
 	public void SnapToPrevNext(int selectedPoint){
+		//Set position before snap
 		beforeSnapPos = content.transform.localPosition;
+		//Snap to selected
 		scrollRect.horizontalNormalizedPosition = snapPoint[selectedPoint];
+		//Set position after snap
 		afterSnapPos = content.transform.localPosition;
+		//Animate
 		content.GetComponent<RectTransform> ().TweenRectTrans (Siri.Rtype.LocalPosition,Easing.Type.EaseOutQuad,beforeSnapPos,afterSnapPos,0.25f);
 	}
 
 	public void OpenTheBook(){
-		//Update book pages
-		book.UpdateSprites ();
-		//Initiate to first download of the book is clicked
-		GetDataFromJson ();
+		//Initiate to first download of selected book is clicked
+		LoadSelectedBook ();
 		//Set mute button to appears
 		muteButton.gameObject.SetActive (true);
 		//To blur bg
@@ -156,7 +175,7 @@ public class BookController : MonoBehaviour {
 	}
 	//Tween In and Out when the book is scrolling thru mid. of display.
 	void TweenInAndOut(){
-		for (int i=0;i < MaxCloningCoverInScene ;i++){
+		for (int i=0;i < CloningInScene ;i++){
 			float tmpScale = 1.00f - Mathf.Abs(snapPoint[i] - scrollRect.horizontalNormalizedPosition);
 			content.transform.GetChild(i).transform.localScale = new Vector3(tmpScale,tmpScale,1);
 		}
@@ -164,8 +183,8 @@ public class BookController : MonoBehaviour {
 
 	void LoadPageController(){
 		
-		for(int i=0;i<BookPageLength;i++){
-			book.bookPages [i] = Sprite.Create(Resources.Load<Texture2D>(dir+"/"+i),new Rect(0,0,512f,512f),new Vector2(0,0));
+		for(int i=0;i<BookPageLength[CurrentBookIndex];i++){
+			book.bookPages [i] = Sprite.Create(Resources.Load<Texture2D>(curDir[CurrentBookIndex]+"/"+i),new Rect(0,0,512f,512f),new Vector2(0,0));
 		}
 	}
 		
@@ -183,33 +202,8 @@ public class BookController : MonoBehaviour {
 		while(!reader.isDone){}
 		return reader.text;
 	}
-		
-	void GetDataFromJson(){
-		//Test the new structure of json file
-		string filePath = Path.Combine(GetStreamingPath(),gameDataFileName);
-		string dataAsJson = ReadJsonToString(filePath);
-		//Map json file to object in project
-		BookData [] bookData = JsonHelper.getJsonArray<BookData>(dataAsJson);
-		BookPageLength = bookData [CurrentBookIndex].pageLength;
 
-		//Set array size
-		book.bookPages = new Sprite[BookPageLength];
-		string [] url = new string[bookData[CurrentBookIndex].pageLength];
-		dir = bookData[CurrentBookIndex].onBookCover.bookTitle;
-		//First dir creating
-		imageDownloader.CreateDirectory (dir);
-		//Pull url from object to image downloader
-		for(int i=0;i<bookData[CurrentBookIndex].pageLength;i++){
-			url [i]=bookData[CurrentBookIndex].bookPage[i].bookPageImage;
-			StartCoroutine(imageDownloader.Loader (url[i],dir,i,LoadingIsCompleted,CurrentBookIndex));
-		}
-	}
-
-	private void LoadingIsCompleted(int index,Sprite spr)
-	{
-		book.bookPages [index] = spr;
-		tmpBookPage.Add (spr);
-	}
+	
 	public string ReadJsonToString(string fileName){
 		using (StreamReader reader = new StreamReader(Path.Combine(GetStreamingPath(),fileName)))
 		{
@@ -218,7 +212,32 @@ public class BookController : MonoBehaviour {
 	}
 
 	void UseTmpBookPage(){
-		for(int i=0;i<BookPageLength;i++)
-			book.bookPages [i] = tmpBookPage [i];
+		for(int i=0;i<BookPageLength[CurrentBookIndex];i++)
+			book.bookPages [i] = content.transform.GetChild(CurrentBookIndex).GetComponent<CloningComponent>().tmpPage[i];
+	}
+	
+	void LoadingIsCompleted(int index,Sprite spr)
+		{
+			book.bookPages [index] = spr;
+			content.transform.GetChild(CurrentBookIndex).GetComponent<CloningComponent>().tmpPage.Add(spr);
+		}
+	
+	void LoadSelectedBook(){
+		//Set array size
+		book.bookPages = new Sprite[BookPageLength[CurrentBookIndex]];
+		string [] url = new string[bookData[CurrentBookIndex].pageLength];
+		curDir[CurrentBookIndex] = bookData[CurrentBookIndex].onBookCover.bookTitle;
+		//First dir creating
+		imageDownloader.CreateDirectory (curDir[CurrentBookIndex]);
+		//Pull url from object to image downloader
+		for(int i=0;i<bookData[CurrentBookIndex].pageLength;i++){
+			url [i]=bookData[CurrentBookIndex].bookPage[i].bookPageImage;
+			StartCoroutine(imageDownloader.Loader (url[i],curDir[CurrentBookIndex],i,LoadingIsCompleted,CurrentBookIndex));
+		}
+	}
+
+	//Optional : Get 5 books when app. is opened
+	void OptionalLoading(int bookCount){
+
 	}
 }
