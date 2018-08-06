@@ -75,7 +75,7 @@ public class ImageDownloader : MonoBehaviour {
 
 	public void DeleteFile(string dirName,int fileName){
 		if (File.Exists (GetResourcesPath () +dirName+"/"+ fileName+".png")) {
-			print ("Path " + GetResourcesPath () +dirName+"/" + fileName + " is deleted");
+			print ("File " + GetResourcesPath () +dirName+"/" + fileName + " is deleted");
 			File.Delete (GetResourcesPath ()  +dirName+"/"+ fileName+".png");
 		} else
 			print ("File doesn't exist");

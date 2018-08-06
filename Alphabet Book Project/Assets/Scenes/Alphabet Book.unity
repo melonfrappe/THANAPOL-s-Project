@@ -167,7 +167,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 6e62da77132df4f6e82afd23a3d1eb6f, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d16e19a7b94b544f4a6567fd00b1285f, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1262,7 +1262,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 751900986}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 4, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1030343680}
@@ -1271,7 +1271,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 4, y: 0}
   m_SizeDelta: {x: 1310, y: 648.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &751900988
@@ -1514,8 +1514,8 @@ MonoBehaviour:
   imageDownloader: {fileID: 767878988}
   CurrentBookIndex: 0
   CloningIndexCounter: 0
-  CloningInScene: 5
-  MaxPageLengthEachBook: 10
+  BookDataLength: 0
+  MaxPageLengthEachBook: 0
   BookPageLength: 
   bookData: []
 --- !u!1 &1030343679
@@ -1920,7 +1920,7 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: acc805c7cd39c4a9eac80bb14c88e8fb, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8f0df9c360bae4249b0053340472bbee, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1988,7 +1988,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CloningIndex: 0
   tmpPage: []
-  IsFirstDownloading: 0
   cloningComponent: {fileID: 1598889222}
   bookController: {fileID: 826142502}
 --- !u!1 &1875291417
