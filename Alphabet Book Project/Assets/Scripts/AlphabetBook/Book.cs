@@ -104,6 +104,7 @@ public class Book : MonoBehaviour {
         //RectTransformUtility.ScreenPointToLocalPointInRectangle(BookPanel, global, null, out localPos);
         return localPos;
     }
+	bool toggle=true;
     void Update()
     {
         if (pageDragging&&interactable)
@@ -328,6 +329,7 @@ public class Book : MonoBehaviour {
         if (interactable)
             ReleasePage();
     }
+	#region EDIT_RELEASE_PAGE_TO_MULTIPLY_BY_4
     public void ReleasePage()
     {
         if (pageDragging)
@@ -335,14 +337,15 @@ public class Book : MonoBehaviour {
             pageDragging = false;
             float distanceToLeft = Vector2.Distance(c, ebl);
             float distanceToRight = Vector2.Distance(c, ebr);
-            if (distanceToRight < distanceToLeft && mode == FlipMode.RightToLeft)
+            if (distanceToRight*4f < distanceToLeft && mode == FlipMode.RightToLeft)
                 TweenBack();
-            else if (distanceToRight > distanceToLeft && mode == FlipMode.LeftToRight)
+            else if (distanceToRight*4f > distanceToLeft && mode == FlipMode.LeftToRight)
                 TweenBack();
             else
                 TweenForward();
         }
     }
+	#endregion
     Coroutine currentCoroutine;
 	//edit to Public
     public void UpdateSprites()
