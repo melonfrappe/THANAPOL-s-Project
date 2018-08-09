@@ -329,19 +329,19 @@ public class Book : MonoBehaviour {
         if (interactable)
             ReleasePage();
     }
-	#region EDIT_RELEASE_PAGE_TO_MULTIPLY_BY_4
+	#region EDIT_RELEASE_PAGE_TO_NO_DISTANCE
     public void ReleasePage()
     {
         if (pageDragging)
         {
             pageDragging = false;
-            float distanceToLeft = Vector2.Distance(c, ebl);
-            float distanceToRight = Vector2.Distance(c, ebr);
-            if (distanceToRight*4f < distanceToLeft && mode == FlipMode.RightToLeft)
-                TweenBack();
-            else if (distanceToRight*4f > distanceToLeft && mode == FlipMode.LeftToRight)
-                TweenBack();
-            else
+//            float distanceToLeft = Vector2.Distance(c, ebl);
+//            float distanceToRight = Vector2.Distance(c, ebr);
+//            if (distanceToRight < distanceToLeft && mode == FlipMode.RightToLeft)
+//                TweenBack();
+//            else if (distanceToRight > distanceToLeft && mode == FlipMode.LeftToRight)
+//                TweenBack();
+//            else
                 TweenForward();
         }
     }
@@ -351,7 +351,7 @@ public class Book : MonoBehaviour {
     public void UpdateSprites()
     {
 		#region ADD_BLANK_PAGE
-//        LeftNext.sprite= (currentPage > 0 && currentPage <= bookPages.Length) ? bookPages[currentPage-1] : background;
+//      LeftNext.sprite= (currentPage > 0 && currentPage <= bookPages.Length) ? bookPages[currentPage-1] : background;
 		Left.sprite= blankPage;
 //		RightNext.sprite=(currentPage>=0 &&currentPage<bookPages.Length) ? bookPages[currentPage] : background;
 		page.sprite=(currentPage>=0 &&currentPage<bookPages.Length) ? bookPages[currentPage] : background;

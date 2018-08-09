@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.IO;
-using UnityEditor;
+using System;
+
 namespace UnityEngine.UI.Extensions
 {
 	[System.Serializable]
@@ -46,7 +47,6 @@ namespace UnityEngine.UI.Extensions
 
 	public class BookController : MonoBehaviour
 	{
-
 	    [SerializeField] string gameDataFileName = "BookData.json";
 	    [SerializeField] Button backButton;
 	    [SerializeField] Button deleteButton;
@@ -64,7 +64,7 @@ namespace UnityEngine.UI.Extensions
 	    public List<int> BookPageLength = new List<int>();
 
 	    public BookData[] bookData;
-
+		string[] imageURL;
 	    string[] curDir;
 	    float percentage;
 	    float[] snapPoint;
@@ -74,10 +74,14 @@ namespace UnityEngine.UI.Extensions
 
 	    void Start()
 	    {
-	        //Get file path
-	        string filePath = Path.Combine(GetStreamingPath(), gameDataFileName);
+			//Get file path
+			string filePath = Path.Combine(GetStreamingPath(), gameDataFileName);
 	        //Finding the best way to use one-for-all platform
-	        string dataAsJson = ReadJsonToString(filePath);
+			#if UNITY_EDITOR_OSX
+			string dataAsJson = ReadJsonToString(filePath);
+			#else
+			string dataAsJson = GetDataAsJson(filePath);
+			#endif
 	        //Map json file to object in project
 	        bookData = JsonHelper.getJsonArray<BookData>(dataAsJson);
 	        //Set book data length
@@ -138,7 +142,6 @@ namespace UnityEngine.UI.Extensions
 	        print("Max page length is : " + MaxPageLengthEachBook);
 	        print("dataPath : " + Application.dataPath);
 	        print("persistentPath : " + Application.persistentDataPath);
-
 	    }
 	    void Update()
 	    {
@@ -159,29 +162,6 @@ namespace UnityEngine.UI.Extensions
 	        }
 	    }
 
-	    void SnapToNearestPoint()
-	    {
-	        //Use 0.01f to check nearest because impossible to use absolute zero of delta
-	        for (int i = 0; i < BookDataLength; i++)
-	            if (snapPoint[i] - scrollRect.horizontalNormalizedPosition > 0 && snapPoint[i] - scrollRect.horizontalNormalizedPosition < 0.01f)
-	            {
-	                scrollRect.horizontalNormalizedPosition = snapPoint[i];
-	                CurrentBookIndex = i;
-	            }
-	    }
-
-	    public void SnapToPrevNext(int selectedPoint)
-	    {
-	        //Set position before snap
-	        beforeSnapPos = content.transform.localPosition;
-	        //Snap to selected
-	        scrollRect.horizontalNormalizedPosition = snapPoint[selectedPoint];
-	        //Set position after snap
-	        afterSnapPos = content.transform.localPosition;
-	        //Animate
-	        content.GetComponent<RectTransform>().TweenRectTrans(Siri.Rtype.LocalPosition, Easing.Type.EaseOutQuad, beforeSnapPos, afterSnapPos, 0.25f);
-	    }
-
 	    public void OpenBook()
 	    {
 	        //Initiate to first download of selected book is clicked
@@ -196,15 +176,6 @@ namespace UnityEngine.UI.Extensions
 	//        SnapToPrevNext(CurrentBookIndex);
 
 	    }
-	    //Tween In and Out when the book is scrolling thru mid. of display.
-	    void TweenInAndOut()
-	    {
-	        for (int i = 0; i < BookDataLength; i++)
-	        {
-	            float tmpScale = 1.00f - Mathf.Abs(snapPoint[i] - scrollRect.horizontalNormalizedPosition);
-	            content.transform.GetChild(i).transform.localScale = new Vector3(tmpScale, tmpScale, 1);
-	        }
-	    }
 
 	    public string GetStreamingPath()
 	    {
@@ -215,21 +186,31 @@ namespace UnityEngine.UI.Extensions
 		#endif
 	    }
 
-	    //Now can't work in Unity 2017.2.0f3 and lower
+		#region FILE_READER_METHODS
+
+	    //Work on all platfrom except OSX
 	    public string GetDataAsJson(string filePath)
 	    {
 	        WWW reader = new WWW(filePath);
-	        while (!reader.isDone) { }
-	        return reader.text;
+	        while (!reader.isDone) {
+			}
+			return reader.text;
 	    }
-	    //Still not work in this verison...
-	    public string ReadJsonToString(string fileName)
+	    //Use for OSX
+	    public string ReadJsonToString(string filePath)
 	    {
-	        using (StreamReader reader = new StreamReader(Path.Combine(GetStreamingPath(), fileName)))
+	        using (StreamReader reader = new StreamReader(filePath))
 	        {
 	            return reader.ReadToEnd();
 	        }
 	    }
+
+		public string ReadByTextAsset(){
+			TextAsset ta = Resources.Load<TextAsset>("BookData");
+			return ta.ToString ();
+		}
+
+		#endregion
 
 	    void LoadingIsCompleted(int index, Sprite spr)
 	    {
@@ -241,18 +222,20 @@ namespace UnityEngine.UI.Extensions
 	    {
 	        //Set array size
 	        book.bookPages = new Sprite[BookPageLength[CurrentBookIndex]];
-	        string[] url = new string[bookData[CurrentBookIndex].pageLength];
+	        imageURL = new string[bookData[CurrentBookIndex].pageLength];
 	        curDir[CurrentBookIndex] = bookData[CurrentBookIndex].onBookCover.bookTitle;
 	        //First dir creating
 	        imageDownloader.CreateDirectory(curDir[CurrentBookIndex]);
-	        //Pull url from object to image downloader
+	        //Pull imageURL from object to image downloader
 	        for (int i = 0; i < bookData[CurrentBookIndex].pageLength; i++)
 	        {
-	            url[i] = bookData[CurrentBookIndex].bookPage[i].bookPageImage;
-	            StartCoroutine(imageDownloader.Loader(url[i], curDir[CurrentBookIndex], i, LoadingIsCompleted, CurrentBookIndex));
+	            imageURL[i] = bookData[CurrentBookIndex].bookPage[i].bookPageImage;
+	            StartCoroutine(imageDownloader.Loader(imageURL[i], curDir[CurrentBookIndex], i, LoadingIsCompleted, CurrentBookIndex));
 	        }
 	    }
 
+		#region OLD_METHODS
+		//==========//==========//==========//==========//==========//==========//==========
 	    void SetSnappoint()
 	    {
 	        //Calculate percentage of scroll view per object
@@ -276,5 +259,40 @@ namespace UnityEngine.UI.Extensions
 			GameObject clone = Instantiate(coverBook.gameObject, content.transform);
 			cloningComponent.CloningIndex = CloningIndexCounter;
 		}
+
+		//Tween In and Out when the book is scrolling thru mid. of display.
+		void TweenInAndOut()
+		{
+			for (int i = 0; i < BookDataLength; i++)
+			{
+				float tmpScale = 1.00f - Mathf.Abs(snapPoint[i] - scrollRect.horizontalNormalizedPosition);
+				content.transform.GetChild(i).transform.localScale = new Vector3(tmpScale, tmpScale, 1);
+			}
+		}
+
+		void SnapToNearestPoint()
+		{
+			//Use 0.01f to check nearest because impossible to use absolute zero of delta
+			for (int i = 0; i < BookDataLength; i++)
+				if (snapPoint[i] - scrollRect.horizontalNormalizedPosition > 0 && snapPoint[i] - scrollRect.horizontalNormalizedPosition < 0.01f)
+				{
+					scrollRect.horizontalNormalizedPosition = snapPoint[i];
+					CurrentBookIndex = i;
+				}
+		}
+
+		public void SnapToPrevNext(int selectedPoint)
+		{
+			//Set position before snap
+			beforeSnapPos = content.transform.localPosition;
+			//Snap to selected
+			scrollRect.horizontalNormalizedPosition = snapPoint[selectedPoint];
+			//Set position after snap
+			afterSnapPos = content.transform.localPosition;
+			//Animate
+			content.GetComponent<RectTransform>().TweenRectTrans(Siri.Rtype.LocalPosition, Easing.Type.EaseOutQuad, beforeSnapPos, afterSnapPos, 0.25f);
+		}
+		//==========//==========//==========//==========//==========//==========//==========
+		#endregion
 	}
 }
