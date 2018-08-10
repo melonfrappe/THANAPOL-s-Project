@@ -1,235 +1,246 @@
 [
     {
-        "bookColor": "red",
+        "bookColor": "#FF9999",
         "onBookCover": {
-            "bookCoverImage": "null",
+            "bookCoverImage": "https://preview.ibb.co/bvH3Tz/0.jpg",
             "bookTitle": "A"
         },
         "pageLength" : 10,
         "bookPage": [
             {
                 "bookPageImage": "https://preview.ibb.co/bvH3Tz/0.jpg",
-                "bookContent": "anytext"
+                "bookContent": "Big A… little a… Let’s learn about “A”"
             },
             {
                 "bookPageImage": "https://preview.ibb.co/nqOcoz/1.jpg",
-                "bookContent": "anytext"
+                "bookContent": "Look at the apple Growing in a tree."
             },
             {
                 "bookPageImage": "https://preview.ibb.co/fStMFe/2.jpg",
-                "bookContent": "anytext"
+                "bookContent": "Look at the little ants So very tiny."
             },
             {
                 "bookPageImage": "https://preview.ibb.co/czLe1K/3.jpg",
-                "bookContent": "anytext"
+                "bookContent": "An ant crawls on an apple. Ant and apple start with A.If an ant is on your apple, tell it to go away."
             },
             {
                 "bookPageImage": "https://preview.ibb.co/eZQCMK/4.jpg",
-                "bookContent": "anytext"
+                "bookContent": "Wave both of your arms. Way up in the air."
             },
             {
                 "bookPageImage": "https://preview.ibb.co/ct9Hoz/5.jpg",
-                "bookContent": "anytext"
+                "bookContent": "When you get tired. Sit in an armchair."
             },
             {
                 "bookPageImage": "https://preview.ibb.co/fjkOTz/6.jpg",
-                "bookContent": "anytext"
+                "bookContent": "An arm and an armchair. They both start with A. If an armchair had real arms? That would be funny, hey?"
             },
             {
                 "bookPageImage": "https://preview.ibb.co/hxFe1K/7.jpg",
-                "bookContent": "anytext"
+                "bookContent": "Look, at the astronaut. Flying out in space"
             },
             {
                 "bookPageImage": "https://preview.ibb.co/gLCRgK/8.jpg",
-                "bookContent": "anytext"
+                "bookContent": "Look at the alligator. With a toothy face."
             },
             {
                 "bookPageImage": "https://preview.ibb.co/cOKTve/9.jpg",
-                "bookContent": "anytext"
+                "bookContent": "Astronaut and alligator, They also start with A. But an alligator astronaut? I think I’d laugh all day."
             }
-        ]
+        ],
+        "textAnchor" : "LowerCenter",
+        "textColor" : "#000000"
+
     },
     {
-        "bookColor": "orange",
+        "bookColor": "#FFB266",
         "onBookCover": {
-            "bookCoverImage": "null",
+            "bookCoverImage": "https://preview.ibb.co/keLVtz/0.jpg",
             "bookTitle": "B"
         },
         "pageLength" : 10,
         "bookPage": [
             {
                 "bookPageImage": "https://preview.ibb.co/keLVtz/0.jpg",
-                "bookContent": "anytext"
+                "bookContent": "Today, we’re going to learn. Some words that start with B,Not a bee that buzzes by,But, the letter b, you see!"
             },
             {
                 "bookPageImage": "https://preview.ibb.co/kXpemK/1.jpg",
-                "bookContent": "anytext"
+                "bookContent": "Sometimes the letter b can be small,But a capital B, its stands tall.Learning new things is always a joy,And B should be known by every girl and boy."
             },
             {
                 "bookPageImage": "https://preview.ibb.co/dEczmK/2.jpg",
-                "bookContent": "anytext"
+                "bookContent": "What’s your favorite food?Mine’s a banana, since I was a baby,"
             },
             {
                 "bookPageImage": "https://preview.ibb.co/bx2X6K/3.jpg",
-                "bookContent": "anytext"
+                "bookContent": "Do you like bread? Or a burger, maybe?"
             },
             {
                 "bookPageImage": "https://preview.ibb.co/gX0kRK/4.jpg",
-                "bookContent": "anytext"
+                "bookContent": "Well, I bet you’ve seen some boots,But have you seen them on a bear?Big black bootsAre this bear’s favorite pair."
             },
             {
                 "bookPageImage": "https://preview.ibb.co/bB0Vtz/5.jpg",
-                "bookContent": "anytext"
+                "bookContent": "He wears his boots when he plays ballBut, you know what? That’s not all,"
             },
             {
                 "bookPageImage": "https://preview.ibb.co/d99vRK/6.jpg",
-                "bookContent": "anytext"
+                "bookContent": "He wears them when he rides the bus.A bear on a bus? Don’t make a fuss!"
             },
             {
                 "bookPageImage": "https://preview.ibb.co/dggaRK/7.jpg",
-                "bookContent": "anytext"
+                "bookContent": "What starts with B and can float?in the water. Why, it’s a boat."
             },
             {
                 "bookPageImage": "https://preview.ibb.co/j3OYDz/8.jpg",
-                "bookContent": "anytext"
+                "bookContent": "But what can float in the air?A big blue balloon.Can you see one there?"
             },
             {
                 "bookPageImage": "https://preview.ibb.co/nE3N6K/9.jpg",
-                "bookContent": "anytext"
+                "bookContent": "Anyway, that’s it for B,Do you know which letter is number 3?"
             }
             
-        ]
+        ],
+        "textAnchor" : "UpperCenter",
+        "textColor" : "#FFFFFF"
     },
     {
-        "bookColor": "yellow",
+        "bookColor": "#FFFF66",
         "onBookCover": {
-            "bookCoverImage": "null",
+            "bookCoverImage": "https://preview.ibb.co/fP69mK/0.jpg",
             "bookTitle": "C"
         },
         "pageLength" : 8,
         "bookPage": [
             {
                 "bookPageImage": "https://preview.ibb.co/fP69mK/0.jpg",
-                "bookContent": "anytext"
+                "bookContent": "What letter comes after the letter B?"
             },
             {
                 "bookPageImage": "https://preview.ibb.co/izCh6K/1.jpg" ,
-                "bookContent": "anytext"
+                "bookContent": "Maybe you know it. It’s the letter C."
             },
             {
                 "bookPageImage": "https://preview.ibb.co/nkGW0e/2.jpg",
-                "bookContent": "anytext"
+                "bookContent": "C is for clockOr for cameraOr for Cat"
             },
             {
                 "bookPageImage": "https://preview.ibb.co/dR8uLe/3.jpg",
-                "bookContent": "anytext"
+                "bookContent": "C for candyAnd C is for cakeBut don’t each too muchYou’ll have a belly ache"
             },
             {
                 "bookPageImage": "https://preview.ibb.co/mY1s6K/4.jpg",
-                "bookContent": "anytext"
+                "bookContent": "C is for coconut,And C is for car.If you ride in a car, you can go very far."
             },
             {
                 "bookPageImage": "https://preview.ibb.co/ndeemK/5.jpg",
-                "bookContent": "anytext"
+                "bookContent": "C is for coconuts That grow in the sun."
             },
             {
                 "bookPageImage": "https://preview.ibb.co/ehdTfe/6.jpg",
-                "bookContent": "anytext"
+                "bookContent": "C is for camping,Now that’s lots of fun."
             },
             {
                 "bookPageImage": "https://preview.ibb.co/i2fKmK/7.jpg" ,
-                "bookContent": "anytext"
+                "bookContent": "C is for computerAnd oh so much more,But now it’s time to learnAbout letter number 4."
             }
             
             
-        ]
+        ],
+        "textAnchor" : "LowerCenter",
+        "textColor" : "#FFFFFF"
     },
     {
-        "bookColor": "green",
+        "bookColor": "#B2FF66",
         "onBookCover": {
-            "bookCoverImage": "null",
+            "bookCoverImage": "https://preview.ibb.co/meOGYz/0.jpg",
             "bookTitle": "D"
         },
         "pageLength" : 8,
         "bookPage": [
             {
                 "bookPageImage":"https://preview.ibb.co/meOGYz/0.jpg"  ,
-                "bookContent": "anytext"
+                "bookContent": "There’s a letter after C, do you know what letter is that?,It almost looks like a round hat.It can look like a funny door,But it can be used for much, much more"
             },
             {
                 "bookPageImage":  "https://preview.ibb.co/fz7bYz/1.jpg" ,
-                "bookContent": "anytext"
+                "bookContent": "Like in December, you guessed it, It’s the letter D,The one that looks like a pea."
             },
             {
                 "bookPageImage": "https://preview.ibb.co/cpJiDz/2.jpg" ,
-                "bookContent": "anytext"
+                "bookContent": "Big D and little d don’t look the same,But they’re brothers and they have the same name."
             },
             {
                 "bookPageImage": "https://preview.ibb.co/mzgg0e/3.jpg" ,
-                "bookContent": "anytext"
+                "bookContent": "If you don’t know it, don’t be sad,You can just ask your dad.He might be at his desk,Or maybe outside, but not too far away,It’s a beautiful day."
             },
             {
                 "bookPageImage": "https://preview.ibb.co/iZTuLe/4.jpg" ,
-                "bookContent": "anytext"
+                "bookContent": "You can go outside too,Play games, dance and have fun,Crack a smile and enjoy the shining sun."
             },
             {
                 "bookPageImage": "https://preview.ibb.co/cM58fe/5.jpg" ,
-                "bookContent": "anytext"
+                "bookContent": "Take the leash and put it on the dog,You can go on a short walk."
             },
             {
                 "bookPageImage": "https://preview.ibb.co/j35Vtz/6.jpg" ,
-                "bookContent": "anytext"
+                "bookContent": "Maybe you’ll have some luck,And see a deer or a duck."
             },
             {
                 "bookPageImage": "https://preview.ibb.co/ifkVtz/7.jpg"  ,
-                "bookContent": "anytext"
+                "bookContent": "Bring a toy, dice or your favorite doll,It’s great fun for all."
             }
             
             
-        ]
+        ],
+        "textAnchor" : "UpperCenter",
+        "textColor" : "#000000"
     },
     {
-        "bookColor": "blue",
+        "bookColor": "#66FFFF",
         "onBookCover": {
-            "bookCoverImage": "null",
+            "bookCoverImage": "https://preview.ibb.co/bwNJDz/0.jpg",
             "bookTitle": "E"
         },
         "pageLength" : 8,
         "bookPage": [
             {
                 "bookPageImage": "https://preview.ibb.co/bwNJDz/0.jpg" ,
-                "bookContent": "anytext"
+                "bookContent": "Today we’re going to learn about a new letter,You have seen this one everywhere.You’ll use this one a lot, don’t forget,It’s the 5th letter of the alphabet."
             },
             {
                 "bookPageImage": "https://preview.ibb.co/kSaG0e/1.jpg" ,
-                "bookContent": "anytext"
+                "bookContent": "There’s a big E and a little e,Any more different, they couldn’t be.Learning about letters is fun and easy,"
             },
             {
                 "bookPageImage": "https://preview.ibb.co/jgtfRK/2.jpg"  ,
-                "bookContent": "anytext"
+                "bookContent": "So let’s get the pencil, paper and eraser,And learn some more."
             },
             {
                 "bookPageImage": "https://preview.ibb.co/ex0G0e/3.jpg"  ,
-                "bookContent": "anytext"
+                "bookContent": "Do you have a favorite animal?An elephant is a good choice,"
             },
             {
                 "bookPageImage": "https://preview.ibb.co/jYQS6K/4.jpg"  ,
-                "bookContent": "anytext"
+                "bookContent": "It has big ears and eyes, a long trunk and deep voice."
             },
             {
                 "bookPageImage": "https://preview.ibb.co/jLJQtz/5.jpg"  ,
-                "bookContent": "anytext"
+                "bookContent": "What about chickens?Just like us, they walk on two legs,"
             },
             {
                 "bookPageImage": "https://preview.ibb.co/mfrZmK/6.jpg" ,
-                "bookContent": "anytext"
+                "bookContent": "And give us a lot of eggs."
             },
             {
                 "bookPageImage": "https://preview.ibb.co/i75umK/7.jpg"  ,
-                "bookContent": "anytext"
+                "bookContent": "Now that we have learned about E,It’s time we move on to number 6,Stick around, let’s have fun and learn,It’s the letter F’s turn."
             }
             
             
-        ]
+        ],
+        "textAnchor" : "LowerCenter",
+        "textColor" : "#000000"
     }
 ]

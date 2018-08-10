@@ -5,7 +5,6 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.IO;
 using System;
-
 namespace UnityEngine.UI.Extensions
 {
 	[System.Serializable]
@@ -15,6 +14,8 @@ namespace UnityEngine.UI.Extensions
 	    public OnBookCover onBookCover;
 	    public int pageLength;
 	    public BookPage[] bookPage;
+		public string textAnchor;
+		public string textColor;
 	}
 	[System.Serializable]
 	public class BookPage
@@ -69,9 +70,12 @@ namespace UnityEngine.UI.Extensions
 	    float percentage;
 	    float[] snapPoint;
 	    public bool finishToRead = false;
-
+		public Sprite[] BookCoverImage;
 	    Vector2 beforeSnapPos, afterSnapPos;
 
+		void LoadingBookCover(int index,Sprite spr){
+			BookCoverImage [index] = spr;
+		}
 	    void Start()
 	    {
 			//Get file path
@@ -86,10 +90,16 @@ namespace UnityEngine.UI.Extensions
 	        bookData = JsonHelper.getJsonArray<BookData>(dataAsJson);
 	        //Set book data length
 	        BookDataLength = bookData.Length;
+			//Book cover size
+			BookCoverImage = new Sprite[BookDataLength];
 	        //Set current directory size for store each directory name with a book title
 	        curDir = new string[BookDataLength];
+			//Load book cover first
+			imageDownloader.CreateDirectory("_BookCover");
+			for(int i=0; i<BookDataLength; i++){
+				StartCoroutine(imageDownloader.Loader(bookData[i].onBookCover.bookCoverImage,"_BookCover",i,LoadingBookCover,i));
+			}
 	        //Set book page length size
-
 	        for (int i = 0; i < BookDataLength; i++)
 	        {
 	            //Set each book page length
@@ -205,14 +215,9 @@ namespace UnityEngine.UI.Extensions
 	        }
 	    }
 
-		public string ReadByTextAsset(){
-			TextAsset ta = Resources.Load<TextAsset>("BookData");
-			return ta.ToString ();
-		}
-
 		#endregion
 
-	    void LoadingIsCompleted(int index, Sprite spr)
+	    void FinishToLoad(int index, Sprite spr)
 	    {
 	        book.bookPages[index] = spr;
 	//        content.transform.GetChild(CurrentBookIndex).GetComponent<CloningComponent>().tmpPage.Add(spr);
@@ -220,8 +225,10 @@ namespace UnityEngine.UI.Extensions
 
 	    void LoadSelectedBook()
 	    {
+			imageDownloader.Counter = 0;
 	        //Set array size
 	        book.bookPages = new Sprite[BookPageLength[CurrentBookIndex]];
+			book.pageText = new string[BookPageLength[CurrentBookIndex]];
 	        imageURL = new string[bookData[CurrentBookIndex].pageLength];
 	        curDir[CurrentBookIndex] = bookData[CurrentBookIndex].onBookCover.bookTitle;
 	        //First dir creating
@@ -229,9 +236,19 @@ namespace UnityEngine.UI.Extensions
 	        //Pull imageURL from object to image downloader
 	        for (int i = 0; i < bookData[CurrentBookIndex].pageLength; i++)
 	        {
+				book.pageText [i] = bookData [CurrentBookIndex].bookPage [i].bookContent;
 	            imageURL[i] = bookData[CurrentBookIndex].bookPage[i].bookPageImage;
-	            StartCoroutine(imageDownloader.Loader(imageURL[i], curDir[CurrentBookIndex], i, LoadingIsCompleted, CurrentBookIndex));
+	            StartCoroutine(imageDownloader.Loader(imageURL[i], curDir[CurrentBookIndex], i, FinishToLoad, CurrentBookIndex));
 	        }
+			//Text alignment
+			book.bookText.alignment = (TextAnchor)System.Enum.Parse (typeof(TextAnchor), bookData [CurrentBookIndex].textAnchor);
+			book.bookTextL.alignment = (TextAnchor)System.Enum.Parse (typeof(TextAnchor), bookData [CurrentBookIndex].textAnchor);
+			//Change text color follow the json
+			Color tmpColor = new Color();
+			ColorUtility.TryParseHtmlString (bookData [CurrentBookIndex]. textColor,out tmpColor);
+			book.bookText.color = tmpColor;
+			book.bookTextL.color = tmpColor;
+
 	    }
 
 		#region OLD_METHODS

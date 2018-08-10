@@ -3,7 +3,6 @@ using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using System.IO;
-
 public enum FlipMode
 {
     RightToLeft,
@@ -16,6 +15,8 @@ public class Book : MonoBehaviour {
 	[SerializeField] Image pageL;
 	[SerializeField] Sprite blankPage;
 	[SerializeField] GameObject backButton;
+	public string [] pageText;
+	public Text bookText, bookTextL;
 	#endregion
 
     public Canvas canvas;
@@ -274,7 +275,8 @@ public class Book : MonoBehaviour {
 //        RightNext.sprite = (currentPage < bookPages.Length - 1) ? bookPages[currentPage + 1] : background;
 		page.sprite= (currentPage < bookPages.Length - 1) ? bookPages[currentPage + 1] : background;
 		pageL.sprite= (currentPage <= bookPages.Length - 1) ? bookPages[currentPage] : background;
-
+		bookText.text = (currentPage < bookPages.Length - 1) ? pageText[currentPage + 1] : "";
+		bookTextL.text= (currentPage <= bookPages.Length - 1) ? pageText[currentPage] : "";
 		#endregion
         LeftNext.transform.SetAsFirstSibling();
         if (enableShadowEffect) Shadow.gameObject.SetActive(true);
@@ -355,10 +357,13 @@ public class Book : MonoBehaviour {
 		Left.sprite= blankPage;
 //		RightNext.sprite=(currentPage>=0 &&currentPage<bookPages.Length) ? bookPages[currentPage] : background;
 		page.sprite=(currentPage>=0 &&currentPage<bookPages.Length) ? bookPages[currentPage] : background;
-
 		if(currentPage!=0)
 			pageL.sprite=(currentPage>=0 &&currentPage<=bookPages.Length) ? bookPages[currentPage-1] : background;
 
+		bookText.text=(currentPage>=0 &&currentPage<bookPages.Length) ? pageText[currentPage] : "";
+		if(currentPage!=0)
+			bookTextL.text=(currentPage>=0 &&currentPage<=bookPages.Length) ? pageText[currentPage-1] : "";
+		
 		#endregion
 	}
     public void TweenForward()

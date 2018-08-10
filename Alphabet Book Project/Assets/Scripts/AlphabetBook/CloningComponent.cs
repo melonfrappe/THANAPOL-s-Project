@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.IO;
 namespace UnityEngine.UI.Extensions
 {
 	public class CloningComponent : MonoBehaviour {
@@ -13,7 +14,16 @@ namespace UnityEngine.UI.Extensions
 		[SerializeField] Button cloningComponent;
 		[SerializeField] BookController bookController;
 		[SerializeField] ScrollPositionController spc;
+		[SerializeField] Image bookCover;
+		[SerializeField] ImageDownloader imageDownloader;
+
 		void Start(){
+			//Set color each book
+			Color tmpColor = new Color();
+			ColorUtility.TryParseHtmlString (bookController.bookData [this.CloningIndex].bookColor,out tmpColor);
+			this.GetComponent<Image> ().color = tmpColor;
+
+			//Add button listener
 			cloningComponent.onClick.AddListener (()=>{
 				if(bookController.CurrentBookIndex == bookController.BookDataLength-1 && this.CloningIndex == 0){
 					spc.SnapToNext();
@@ -33,6 +43,26 @@ namespace UnityEngine.UI.Extensions
 					bookController.OpenBook();	
 				}
 			});
+		}
+
+		void LoadBookCover(){
+			byte[] bytes = File.ReadAllBytes(imageDownloader.GetResourcesPath()+bookController.bookData[this.CloningIndex].onBookCover.bookTitle+"/"+"0.png");
+			Texture2D texture = new Texture2D(8,8);
+			texture.LoadImage(bytes);
+			Sprite spr = texture.ToSprite();
+			this.bookCover.sprite = spr;
+		}
+
+		void Update(){
+			//Set each book cover
+			if(imageDownloader.Counter == bookController.BookDataLength && this.bookCover.sprite == null){
+				this.bookCover.sprite = bookController.BookCoverImage[this.CloningIndex];
+				this.bookCover.color = new Color (1,1,1,1);
+
+				//Debug
+				print("Set book cover#"+this.CloningIndex);
+			}
+				
 		}
 	}
 }
