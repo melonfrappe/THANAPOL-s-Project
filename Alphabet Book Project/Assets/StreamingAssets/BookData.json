@@ -242,5 +242,197 @@
         ],
         "textAnchor" : "LowerCenter",
         "textColor" : "#000000"
+    },
+    {
+        "bookColor": "#8F00FF",
+        "onBookCover": {
+            "bookCoverImage": "https://preview.ibb.co/bKbdtU/letter_f_01.jpg",
+            "bookTitle": "F"
+        },
+        "pageLength" : 8,
+        "bookPage": [
+            {
+                "bookPageImage": "https://preview.ibb.co/bKbdtU/letter_f_01.jpg" ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/fNeytU/letter_f_02.jpg" ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/cLdf7p/letter_f_03.jpg"  ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/gGpRf9/letter_f_04.jpg"  ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/kRpRf9/letter_f_05.jpg"  ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage":"https://preview.ibb.co/gg66f9/letter_f_06.jpg"   ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/eNhCL9/letter_f_07.jpg"  ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/nNdV7p/letter_f_08.jpg"  ,
+                "bookContent": ""
+            }
+            
+            
+        ],
+        "textAnchor" : "LowerCenter",
+        "textColor" : "#000000"
+    },
+    {
+        "bookColor": "#4A9B64",
+        "onBookCover": {
+            "bookCoverImage": "https://preview.ibb.co/bPyaq9/AI_G_01.jpg",
+            "bookTitle": "G"
+        },
+        "pageLength" : 8,
+        "bookPage": [
+            {
+                "bookPageImage": "https://preview.ibb.co/bPyaq9/AI_G_01.jpg" ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/cM3VOU/AI_G_02.jpg"  ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/m9gOcp/AI_G_03.jpg"  ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/jZUbxp/AI_G_04.jpg"  ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/fvcwxp/AI_G_05.jpg"   ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage":"https://preview.ibb.co/cfFuiU/AI_G_06.jpg"   ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/kDbdA9/AI_G_07.jpg" ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/k6pgV9/AI_G_08.jpg"   ,
+                "bookContent": ""
+            }
+            
+            
+        ],
+        "textAnchor" : "LowerCenter",
+        "textColor" : "#000000"
+    },
+    {
+        "bookColor": "#9DCCBE",
+        "onBookCover": {
+            "bookCoverImage": "https://preview.ibb.co/k3VPHp/H_h_01.jpg" ,
+            "bookTitle": "H"
+        },
+        "pageLength" : 9,
+        "bookPage": [
+            {
+                "bookPageImage": "https://preview.ibb.co/k3VPHp/H_h_01.jpg",
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/cwTiA9/H_h_02.jpg"  ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/jXxtA9/H_h_03.jpg"  ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/g1bLq9/H_h_04.jpg"   ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/cum9iU/H_h_05.jpg"    ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage":"https://preview.ibb.co/eidYA9/H_h_06.jpg"   ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/hpNFOU/H_h_07.jpg"  ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/faGycp/H_h_08.jpg"    ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/kDch3U/H_h_09.jpg"     ,
+                "bookContent": ""
+            }
+            
+            
+        ],
+        "textAnchor" : "LowerCenter",
+        "textColor" : "#000000"
+    },
+    {
+        "bookColor": "#DBD6B8",
+        "onBookCover": {
+            "bookCoverImage": "https://preview.ibb.co/m50Gxp/J_j_01.jpg" ,
+            "bookTitle": "J"
+        },
+        "pageLength" : 9,
+        "bookPage": [
+            {
+                "bookPageImage": "https://preview.ibb.co/m50Gxp/J_j_01.jpg",
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/n4iQq9/J_j_02.jpg"  ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/fF1mV9/J_j_03.jpg"  ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/g4PjHp/J_j_04.jpg"    ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/mxzJcp/J_j_05.jpg"     ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/eAVPHp/J_j_06.jpg"    ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/d60Vq9/J_j_07.jpg"  ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/nuYTcp/J_j_08.jpg"    ,
+                "bookContent": ""
+            },
+            {
+                "bookPageImage": "https://preview.ibb.co/bHSbV9/J_j_09.jpg"     ,
+                "bookContent": ""
+            }
+            
+            
+        ],
+        "textAnchor" : "LowerCenter",
+        "textColor" : "#000000"
     }
 ]
