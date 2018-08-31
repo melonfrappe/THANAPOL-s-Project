@@ -18,11 +18,6 @@ namespace UnityEngine.UI.Extensions
 		[SerializeField] ImageDownloader imageDownloader;
 
 		void Start(){
-			//Set color each book
-			Color tmpColor = new Color();
-			ColorUtility.TryParseHtmlString (bookController.bookData [this.CloningIndex].bookColor,out tmpColor);
-			this.GetComponent<Image> ().color = tmpColor;
-
 			//Add button listener
 			cloningComponent.onClick.AddListener (()=>{
 				if(bookController.CurrentBookIndex == bookController.BookDataLength-1 && this.CloningIndex == 0){
@@ -54,6 +49,11 @@ namespace UnityEngine.UI.Extensions
 		}
 
 		void Update(){
+			//Set color each book
+			Color tmpColor = new Color();
+			ColorUtility.TryParseHtmlString (bookController.bookData [this.CloningIndex].bookColor,out tmpColor);
+			this.GetComponent<Image> ().color = tmpColor;
+
 			//Set each book cover
 			if(imageDownloader.Counter == bookController.BookDataLength && this.bookCover.sprite == null){
 				this.bookCover.sprite = bookController.BookCoverImage[this.CloningIndex];
@@ -62,6 +62,9 @@ namespace UnityEngine.UI.Extensions
 				//Debug
 				print("Set book cover#"+this.CloningIndex);
 			}
+			//Always update
+			this.bookCover.sprite = bookController.BookCoverImage[this.CloningIndex];
+			this.bookCover.color = new Color (1,1,1,1);
 				
 		}
 	}
