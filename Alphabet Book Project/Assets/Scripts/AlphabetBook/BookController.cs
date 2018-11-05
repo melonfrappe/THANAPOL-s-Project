@@ -46,7 +46,7 @@ namespace UnityEngine.UI.Extensions
 	    }
 	}
 
-	public class BookController : MonoBehaviour
+	public class BookController : Singleton<BookController>
 	{
 	    [SerializeField] string gameDataFileName = "BookData.json";
 	    [SerializeField] Button backButton;
@@ -90,6 +90,8 @@ namespace UnityEngine.UI.Extensions
 	        bookData = JsonHelper.getJsonArray<BookData>(dataAsJson);
 	        //Set book data length
 	        BookDataLength = bookData.Length;
+			//Debug
+			print(">>>"+BookDataLength);
 			//Book cover size
 			BookCoverImage = new Sprite[BookDataLength];
 	        //Set current directory size for store each directory name with a book title

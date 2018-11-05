@@ -4,9 +4,8 @@ using System.Collections;
 using System.IO;
 using System;
 
-public class ImageDownloader : MonoBehaviour {
+public class ImageDownloader : Singleton<ImageDownloader> {
 	public int Counter;
-	[SerializeField] GameObject content;
 	public IEnumerator Loader (string url,string dirName,int fileName,Action<int,Sprite> callbackSuccess,int curIndex) {
 		
 		if(File.Exists(GetResourcesPath()+dirName+"/" + fileName +".png")){
