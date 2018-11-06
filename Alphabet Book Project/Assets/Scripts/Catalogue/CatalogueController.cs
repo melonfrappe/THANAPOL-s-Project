@@ -6,31 +6,28 @@ public class CatalogueController : Singleton<CatalogueController> {
 
 	public GameObject TopShelf;
 	public GameObject MidShelf;
-	public GameObject BookCover;
+	public GameObject MidBookCover;
 	public Button BackButton;
 	public Button SearchBar;
+	public Transform HorizontalContent;
 	public Transform VerticalContent;
 	public InputField SearchInput;
 	public int catalogueCount;
-	public GameObject Book;
-	// Use this for initialization
+	public GameObject OpenedBook;
+	public Book Book;
+
+	BookController bc;
+
 	void Start () {
-		CloneShelf (catalogueCount);
-	}
-	
-	// Update is called once per frame
-	void Update () {
 		
+		bc = BookController.Instance;
+
+		//CloneShelf (catalogueCount);
 	}
 
 	public void CloneShelf(int count){
 		for(int i=0; i<count ;i++){
 			Instantiate (MidShelf, VerticalContent);
 		}
-	}
-
-	public void OpenBook(){
-		if(!Book.activeInHierarchy)
-			Book.SetActive (true);
 	}
 }
