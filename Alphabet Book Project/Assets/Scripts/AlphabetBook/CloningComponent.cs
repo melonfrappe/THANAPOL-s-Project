@@ -12,6 +12,7 @@ public class CloningComponent : MonoBehaviour {
 	public bool snapToSelectingBook = false;
 	public Button coverButton;
 	public Image coverImage;
+	public Image coverColor;
 
 	BookController bc;
 	ImageDownloader id;
@@ -26,19 +27,17 @@ public class CloningComponent : MonoBehaviour {
 		});
 	}
 
-
 	void Update(){
 		//Set each book cover
 		if(id.Counter == bc.BookDataLength && coverImage.sprite == null){
 			coverImage.sprite = bc.BookCoverImage[BookIndex];
+			coverImage.color = Color.white;
+			//Set color each book
+			Color tmpColor = new Color();
+			ColorUtility.TryParseHtmlString (bc.bookData [BookIndex].bookColor,out tmpColor);
+			coverColor.color = tmpColor;
+			print (">>>Book#"+BookIndex+" is set");
 		}
-		//Set color each book
-		Color tmpColor = new Color();
-		ColorUtility.TryParseHtmlString (bc.bookData [BookIndex].bookColor,out tmpColor);
-		GetComponentInChildren<Image> ().color = tmpColor;
-		//Always update
-//		bookCover.sprite = bc.BookCoverImage[BookIndex];
-//		bookCover.color = Color.white;
-//				
+			
 	}
 }

@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.IO;
 using System;
-[System.Serializable]
+[Serializable]
 public class BookData
 {
     public string bookColor;
@@ -15,13 +15,13 @@ public class BookData
 	public string textAnchor;
 	public string textColor;
 }
-[System.Serializable]
+[Serializable]
 public class BookPage
 {
     public string bookPageImage;
     public string bookContent;
 }
-[System.Serializable]
+[Serializable]
 public class OnBookCover
 {
     public string bookCoverImage;
@@ -86,7 +86,7 @@ public class BookController : Singleton<BookController>
         //Set book data length
         BookDataLength = bookData.Length;
 		//Debug
-		print(">>>"+BookDataLength);
+		print(">>>BookDataLenght : "+BookDataLength);
 		//Book cover size
 		BookCoverImage = new Sprite[BookDataLength];
         //Set current directory size for store each directory name with a book title
@@ -97,12 +97,12 @@ public class BookController : Singleton<BookController>
 			StartCoroutine(imageDownloader.Loader(bookData[i].onBookCover.bookCoverImage,"_BookCover",i,LoadingBookCover,i));
 		}
         //Set book page length size
-        for (int i = 0; i < BookDataLength; i++)
+        for (int i=0; i < BookDataLength; i++)
         {
             //Set each book page length
             BookPageLength.Add(bookData[i].pageLength);
             //Get max page length
-            if (i == 0)
+            if (i==0)
             {
                 MaxPageLengthEachBook = bookData[0].pageLength;
             }
@@ -121,7 +121,7 @@ public class BookController : Singleton<BookController>
         //Close the book when play
         openingBook.gameObject.SetActive(false);
         //Set snappoint
-        SetSnappoint();
+        //SetSnappoint();
         //Cloning into content
         CloneFromBookDataLength();
         //Add listener of back button
@@ -179,8 +179,6 @@ public class BookController : Singleton<BookController>
         barrier.gameObject.SetActive(true);
         //Reset to 1st page before open each book
         book.ResetCurrentPage();
-        //Snap to prev/next book when the book is cliked not be mid. of display
-        //SnapToPrevNext(CurrentBookIndex);
 
     }
 

@@ -27,7 +27,7 @@
         public override void UpdateContent(Example01CellDto itemData)
         {
 			message.text = "Book #"+itemData.Index.ToString();
-			cloningComponent.CloningIndex = itemData.Index;
+			cloningComponent.BookIndex = itemData.Index;
 
         }
 
