@@ -49,19 +49,19 @@ public class BookController : Singleton<BookController>
     [SerializeField] string gameDataFileName = "BookData.json";
     [SerializeField] Button backButton;
     [SerializeField] Button deleteButton;
-    [SerializeField] GameObject muteButton;
     [SerializeField] GameObject coverBook;
     [SerializeField] GameObject content;
     [SerializeField] GameObject openingBook;
     [SerializeField] ScrollRect scrollRect;
     [SerializeField] Book book;
-    [SerializeField] CloningComponent cloningComponent;
     [SerializeField] GameObject barrier;
     [SerializeField] ImageDownloader imageDownloader;
-
+	public GameObject TopShelf;
+	public GameObject MidShelf;
+	public Button UnselectedPanel;
     public int CurrentBookIndex, CloningIndexCounter, BookDataLength, MaxPageLengthEachBook;
     public List<int> BookPageLength = new List<int>();
-
+	public bool IsSelecting;
     public BookData[] bookData;
 	string[] imageURL;
     string[] curDir;
@@ -85,8 +85,6 @@ public class BookController : Singleton<BookController>
         bookData = JsonHelper.getJsonArray<BookData>(dataAsJson);
         //Set book data length
         BookDataLength = bookData.Length;
-		//Debug
-		print(">>>BookDataLenght : "+BookDataLength);
 		//Book cover size
 		BookCoverImage = new Sprite[BookDataLength];
         //Set current directory size for store each directory name with a book title
@@ -115,19 +113,14 @@ public class BookController : Singleton<BookController>
             {
                 finishToRead = true;
             }
-
         }
-
         //Close the book when play
         openingBook.gameObject.SetActive(false);
-        //Set snappoint
-        //SetSnappoint();
         //Cloning into content
         CloneFromBookDataLength();
         //Add listener of back button
         backButton.onClick.AddListener(() =>
         {
-            muteButton.gameObject.SetActive(false);
             barrier.gameObject.SetActive(false);
             openingBook.gameObject.SetActive(false);
         });
@@ -143,56 +136,91 @@ public class BookController : Singleton<BookController>
                     imageDownloader.RemoveDirectory(curDir[CurrentBookIndex]);
             }
         });
-
-        //Debuging Zone
-        print(dataAsJson);
-        print("Max page length is : " + MaxPageLengthEachBook);
-        print("dataPath : " + Application.dataPath);
-        print("persistentPath : " + Application.persistentDataPath);
+		
+//        //Debuging Zone
+//		print (dataAsJson);
+//		print ("Max page length is : " + MaxPageLengthEachBook);
+//		print ("dataPath : " + Application.dataPath);
+//		print ("persistentPath : " + Application.persistentDataPath);
     }
-    void Update()
-    {
-        //Wait for reading is finished
-        //if (finishToRead)
-        //SnapToNearestPoint();
-        //A little animate when snap to prev or next
-        //TweenInAndOut();
-        //Use to open the selected book when it was clicked
-        if (CurrentBookIndex >=0 && imageDownloader.Counter == BookPageLength[CurrentBookIndex] && BookPageLength[CurrentBookIndex] != 0)
-        {
-            //Let the book appears
-            openingBook.gameObject.SetActive(true);
-            //Update before open
-            book.UpdateSprites();
-            //Reset counter
-            imageDownloader.Counter = 0;
-        }
-    }
-
+	void Update(){
+		if(Input.GetKey(KeyCode.Space)){
+			SetBookCover ();
+		}
+	}
+	public void Unselected(){
+		for(int i=0; i<UnselectedPanel.gameObject.transform.childCount; i++)
+			Destroy(UnselectedPanel.gameObject.transform.GetChild(i).gameObject);
+		UnselectedPanel.gameObject.SetActive(false);
+	}
     public void OpenBook()
     {
         //Initiate to first download of selected book is clicked
         LoadSelectedBook();
-        //Set mute button to appears
-        muteButton.gameObject.SetActive(true);
         //To blur bg
         barrier.gameObject.SetActive(true);
         //Reset to 1st page before open each book
         book.ResetCurrentPage();
 
     }
+	void SetBookCover(){
+		int bookIndex=0;
+		var ct = content.GetComponentsInChildren<CloningComponent> ();
+		foreach(CloningComponent cc in ct){
+			cc.coverImage.sprite = BookCoverImage[bookIndex];
+			cc.coverImage.color = Color.white;
+			//Set color each book
+			Color tmpColor = new Color();
+			ColorUtility.TryParseHtmlString (bookData [bookIndex].bookColor,out tmpColor);
+			cc.coverColor.color = tmpColor;
+			bookIndex++;
+		}
+	}
+	void LoadingBookCover(int index,Sprite spr){
+		BookCoverImage[index] = spr;
+		if(imageDownloader.Counter == BookDataLength){
+			StartCoroutine (WaitForCallback (1, () => {
+				SetBookCover ();
+			}));
+		}
+	}
+	void FinishToLoad(int index, Sprite spr)
+	{
+		book.bookPages[index] = spr;
+		if (imageDownloader.Counter == BookPageLength [CurrentBookIndex]) {
+			openingBook.gameObject.SetActive (true);
+			//Update before open
+			book.UpdateSprites();
+		}
+	}
 
-    public string GetStreamingPath()
-    {
-	#if UNITY_EDITOR
-	        return Application.streamingAssetsPath;
-	#elif UNITY_ANDROID
-			return "jar:file://" + Application.dataPath + "!/assets/";
-	#endif
-    }
-
+	void LoadSelectedBook()
+	{
+		imageDownloader.Counter = 0;
+		//Set array size
+		book.bookPages = new Sprite[BookPageLength[CurrentBookIndex]];
+		book.pageText = new string[BookPageLength[CurrentBookIndex]];
+		imageURL = new string[bookData[CurrentBookIndex].pageLength];
+		curDir[CurrentBookIndex] = bookData[CurrentBookIndex].onBookCover.bookTitle;
+		//First dir creating
+		imageDownloader.CreateDirectory(curDir[CurrentBookIndex]);
+		//Pull imageURL from object to image downloader
+		for (int i = 0; i < bookData[CurrentBookIndex].pageLength; i++)
+		{
+			book.pageText [i] = bookData [CurrentBookIndex].bookPage [i].bookContent;
+			imageURL[i] = bookData[CurrentBookIndex].bookPage[i].bookPageImage;
+			StartCoroutine(imageDownloader.Loader(imageURL[i], curDir[CurrentBookIndex], i, FinishToLoad, CurrentBookIndex));
+		}
+	}
 	#region FILE_READER_METHODS
-
+	public string GetStreamingPath()
+	{
+		#if UNITY_EDITOR
+		return Application.streamingAssetsPath;
+		#elif UNITY_ANDROID
+		return "jar:file://" + Application.dataPath + "!/assets/";
+		#endif
+	}
     //Work on all platfrom except OSX
     public string GetDataAsJson(string filePath)
     {
@@ -209,46 +237,14 @@ public class BookController : Singleton<BookController>
             return reader.ReadToEnd();
         }
     }
-
 	#endregion
-	void LoadingBookCover(int index,Sprite spr){
-		BookCoverImage [index] = spr;
+
+	public IEnumerator WaitForCallback(float seconds,Action callback){
+		yield return new WaitForSeconds (seconds);
+		callback ();
 	}
-    void FinishToLoad(int index, Sprite spr)
-    {
-        book.bookPages[index] = spr;
-    }
-
-    void LoadSelectedBook()
-    {
-		imageDownloader.Counter = 0;
-        //Set array size
-        book.bookPages = new Sprite[BookPageLength[CurrentBookIndex]];
-		book.pageText = new string[BookPageLength[CurrentBookIndex]];
-        imageURL = new string[bookData[CurrentBookIndex].pageLength];
-        curDir[CurrentBookIndex] = bookData[CurrentBookIndex].onBookCover.bookTitle;
-        //First dir creating
-        imageDownloader.CreateDirectory(curDir[CurrentBookIndex]);
-        //Pull imageURL from object to image downloader
-        for (int i = 0; i < bookData[CurrentBookIndex].pageLength; i++)
-        {
-			book.pageText [i] = bookData [CurrentBookIndex].bookPage [i].bookContent;
-            imageURL[i] = bookData[CurrentBookIndex].bookPage[i].bookPageImage;
-            StartCoroutine(imageDownloader.Loader(imageURL[i], curDir[CurrentBookIndex], i, FinishToLoad, CurrentBookIndex));
-        }
-		//Text alignment
-		book.bookText.alignment = (TextAnchor)System.Enum.Parse (typeof(TextAnchor), bookData [CurrentBookIndex].textAnchor);
-		book.bookTextL.alignment = (TextAnchor)System.Enum.Parse (typeof(TextAnchor), bookData [CurrentBookIndex].textAnchor);
-		//Change text color follow the json
-		Color tmpColor = new Color();
-		ColorUtility.TryParseHtmlString (bookData [CurrentBookIndex]. textColor,out tmpColor);
-		book.bookText.color = tmpColor;
-		book.bookTextL.color = tmpColor;
-
-    }
 
 	#region OLD_METHODS
-	//==========//==========//==========//==========//==========//==========//==========
     void SetSnappoint()
     {
         //Calculate percentage of scroll view per object
@@ -301,6 +297,5 @@ public class BookController : Singleton<BookController>
 		//Animate
 		content.GetComponent<RectTransform>().TweenRectTrans(Siri.Rtype.LocalPosition, Easing.Type.EaseOutQuad, beforeSnapPos, afterSnapPos, 0.25f);
 	}
-	//==========//==========//==========//==========//==========//==========//==========
 	#endregion
 }

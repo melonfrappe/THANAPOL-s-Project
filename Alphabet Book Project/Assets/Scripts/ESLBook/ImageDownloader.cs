@@ -10,21 +10,19 @@ public class ImageDownloader : Singleton<ImageDownloader> {
 		
 		if(File.Exists(GetResourcesPath()+dirName+"/" + fileName +".png")){
 			//File does exist, can open
-
 			byte[] bytes = File.ReadAllBytes(GetResourcesPath()+dirName+"/"  + fileName+".png");
 			Texture2D texture = new Texture2D(8,8);
 			texture.LoadImage(bytes);
-			Counter++;
 			print ("Page #"+Counter+" is loading from device");
 			Sprite spr = texture.ToSprite();
+			Counter++;
+
 			if (callbackSuccess != null) {
 				callbackSuccess.Invoke (fileName,spr);
-
 			}
 		}
 		else {
 			//File doesn't exist, need to download
-
 			//Set flag in selected book (clone) that first time download
 			WWW www = new WWW(url);
 			yield return www;
@@ -32,17 +30,13 @@ public class ImageDownloader : Singleton<ImageDownloader> {
 
 			byte[] bytes = texture.EncodeToPNG();
 			texture.LoadImage (bytes);
-			Sprite spr = texture.ToSprite();
-
-			//Count to check that last image has been download.
-			Counter++;
 			print ("Page #"+Counter+" is loading from server");
+			Sprite spr = texture.ToSprite();
+			Counter++;
 
 			if (callbackSuccess != null) {
 				callbackSuccess.Invoke (fileName,spr);
-
 			}
-				
 			File.WriteAllBytes(GetResourcesPath()+dirName+"/"  +fileName+".png", bytes);
 		}
 
