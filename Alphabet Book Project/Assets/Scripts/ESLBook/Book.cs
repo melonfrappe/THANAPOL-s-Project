@@ -247,7 +247,8 @@ public class Book : MonoBehaviour {
     {
 		#region DEFAULT=bookPages.Lenth
 		if (currentPage >= bookPages.Length-1){ 
-			print("Can't open to next");
+			print(">>>Show result panel");
+			BookController.Instance.ResultPanel.SetActive(true);
 			backButton.transform.TweenTranfrom(Siri.Ttype.Scale,Easing.Type.EaseOutBounce,new Vector3(1,1,1),new Vector3(1.1f,1.1f,1),0.25f);
 			return;
 		}

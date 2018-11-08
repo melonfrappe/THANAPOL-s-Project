@@ -60,6 +60,8 @@ public class BookController : Singleton<BookController>
 	public GameObject TopBookShelf;
 	public GameObject MidBookShelf;
 	public GameObject DescriptionPanel;
+	public GameObject ResultPanel;
+
 	public Image CoverImageDescription;
 
     public ScrollRect ScrollRect;
@@ -138,9 +140,7 @@ public class BookController : Singleton<BookController>
 //		print ("dataPath : " + Application.dataPath);
 //		print ("persistentPath : " + Application.persistentDataPath);
     }
-	public void ExitDescription(){
-		DescriptionPanel.SetActive (false);
-	}
+
 	void LoadBookCover(){
 		ImageDownloader.CreateDirectory("_BookCover");
 		for(int i=0; i<BookDataLength; i++){
@@ -179,10 +179,15 @@ public class BookController : Singleton<BookController>
 	}
     public void OpenBook()
     {
+		Book.ResetCurrentPage();
         //Initiate to first download of selected book is clicked
         LoadSelectedBook();
         //To blur bg
         Barrier.gameObject.SetActive(true);
+		//clone next book on result panel
+		Transform nextBook = ResultPanel.GetComponent<ResultPanel>().NextBook.transform;
+		GameObject _cloneNextBook = Instantiate (MidBookShelfContent.transform.GetChild(CurrentBookIndex+1).gameObject,nextBook);
+
     }
 	void SetBookCover(){
 		int bookIndex=0;
