@@ -53,10 +53,10 @@ public class BookController : Singleton<BookController>
 	public Button UnselectedPanel;
 
 	public GameObject MidCoverBook;
+	public GameObject BookShelfContent;
 	public GameObject MidBookShelfContent;
     public GameObject OpeningBook;
 	public GameObject Barrier;
-	public GameObject BookShelfContent;
 	public GameObject TopBookShelf;
 	public GameObject MidBookShelf;
 
@@ -84,6 +84,8 @@ public class BookController : Singleton<BookController>
 
     void Start()
     {
+		//TODO: check catagory from json data soon
+	
 		//Get file path
 		string filePath = Path.Combine(GetStreamingPath(), GameDataFileName);
         //Finding the best way to use one-for-all platform
@@ -110,10 +112,12 @@ public class BookController : Singleton<BookController>
         CloneFromBookDataLength();
         //Add listener of back button
         BackButton.onClick.AddListener(() =>
-        {
-            Barrier.gameObject.SetActive(false);
-            OpeningBook.gameObject.SetActive(false);
-        });
+	        {
+	            Barrier.gameObject.SetActive(false);
+	            OpeningBook.gameObject.SetActive(false);
+				//Reset to first page when close a book
+				Book.ResetCurrentPage();
+	        });
         //Add listener of delete button
         DeleteButton.onClick.AddListener(() =>
         {
@@ -180,9 +184,6 @@ public class BookController : Singleton<BookController>
         LoadSelectedBook();
         //To blur bg
         Barrier.gameObject.SetActive(true);
-        //Reset to 1st page before open each book
-        Book.ResetCurrentPage();
-
     }
 	void SetBookCover(){
 		int bookIndex=0;
