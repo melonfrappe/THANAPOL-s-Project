@@ -59,6 +59,8 @@ public class BookController : Singleton<BookController>
 	public GameObject Barrier;
 	public GameObject TopBookShelf;
 	public GameObject MidBookShelf;
+	public GameObject DescriptionPanel;
+	public Image CoverImageDescription;
 
     public ScrollRect ScrollRect;
 
@@ -136,11 +138,8 @@ public class BookController : Singleton<BookController>
 //		print ("dataPath : " + Application.dataPath);
 //		print ("persistentPath : " + Application.persistentDataPath);
     }
-
-	void Update(){
-		if(Input.GetKey(KeyCode.Space)){
-			SetBookCover ();
-		}
+	public void ExitDescription(){
+		DescriptionPanel.SetActive (false);
 	}
 	void LoadBookCover(){
 		ImageDownloader.CreateDirectory("_BookCover");

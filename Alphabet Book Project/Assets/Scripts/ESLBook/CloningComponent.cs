@@ -30,7 +30,8 @@ public class CloningComponent : MonoBehaviour {
 			bc.OpenBook();	
 		});
 		descriptionButton.onClick.AddListener (()=>{
-			print(">>>Show description");
+			bc.DescriptionPanel.SetActive(true);
+			bc.CoverImageDescription.sprite = bc.BookCoverImage[bc.CurrentBookIndex];
 		});
 	}
 
