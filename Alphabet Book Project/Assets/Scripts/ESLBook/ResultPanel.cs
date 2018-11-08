@@ -13,11 +13,13 @@ public class ResultPanel :  Singleton<ResultPanel> {
 		bc = BookController.Instance;
 		MenuButton.onClick.AddListener (()=>{
 			//TODO:back to menu
+			bc.BackToCatalogue();
 			gameObject.SetActive(false);
 		});
 		NextButton.onClick.AddListener (()=>{
 			gameObject.SetActive(false);
 			bc.CurrentBookIndex = (bc.CurrentBookIndex+1)%bc.BookDataLength;
+			bc.OpeningBook.SetActive(false);
 			bc.OpenBook();
 		});
 		ReplayButton.onClick.AddListener (()=>{

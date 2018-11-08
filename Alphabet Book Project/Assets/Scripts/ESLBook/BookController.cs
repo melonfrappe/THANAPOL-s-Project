@@ -115,13 +115,7 @@ public class BookController : Singleton<BookController>
         //Cloning into content
         CloneFromBookDataLength();
         //Add listener of back button
-        BackButton.onClick.AddListener(() =>
-	        {
-	            Barrier.gameObject.SetActive(false);
-	            OpeningBook.gameObject.SetActive(false);
-				//Reset to first page when close a book
-				Book.ResetCurrentPage();
-	        });
+		BackButton.onClick.AddListener(BackToCatalogue);
         //Add listener of delete button
         DeleteButton.onClick.AddListener(() =>
         {
@@ -140,7 +134,13 @@ public class BookController : Singleton<BookController>
 //		print ("dataPath : " + Application.dataPath);
 //		print ("persistentPath : " + Application.persistentDataPath);
     }
-
+	public void BackToCatalogue(){
+		Unselected ();
+		Barrier.gameObject.SetActive(false);
+		OpeningBook.gameObject.SetActive(false);
+		//Reset to first page when close a book
+		Book.ResetCurrentPage();
+	}
 	void LoadBookCover(){
 		ImageDownloader.CreateDirectory("_BookCover");
 		for(int i=0; i<BookDataLength; i++){
