@@ -6,7 +6,6 @@ using UnityEngine.EventSystems;
 using System.IO;
 
 public class CloningComponent : MonoBehaviour {
-	public bool IsSelected;
 	public int BookIndex;
 	public List <Sprite> tmpPage = new List<Sprite>();
 	public bool snapToSelectingBook = false;
@@ -24,8 +23,6 @@ public class CloningComponent : MonoBehaviour {
 		//Add button listener
 		coverButton.onClick.AddListener (()=>{
 			bc.UnselectedPanel.gameObject.SetActive(true);
-			IsSelected = true;
-			bc.IsSelecting = true;
 			bc.CurrentBookIndex = BookIndex;
 			SetIsSelected();
 		});
@@ -46,17 +43,5 @@ public class CloningComponent : MonoBehaviour {
 		Siri.TweenExtensions.Transform (clone.GetComponent<RectTransform>(), Siri.Rtype.Scale, clone.transform.localScale, new Vector2 (1.2f, 1.2f), 0.5f, 0, Easing.Type.EaseOutBounce);
 
 	}
-//	void Update(){
-//		//Set each book cover
-//		if(id.Counter == bc.BookDataLength && coverImage.sprite == null){
-//			coverImage.sprite = bc.BookCoverImage[BookIndex];
-//			coverImage.color = Color.white;
-//			//Set color each book
-//			Color tmpColor = new Color();
-//			ColorUtility.TryParseHtmlString (bc.bookData [BookIndex].bookColor,out tmpColor);
-//			coverColor.color = tmpColor;
-//			print (">>>Book#"+BookIndex+" is set");
-//		}
-//	}
 
 }

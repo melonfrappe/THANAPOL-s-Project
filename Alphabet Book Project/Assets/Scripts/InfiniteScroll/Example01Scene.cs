@@ -15,7 +15,8 @@ namespace UnityEngine.UI.Extensions.Examples
         }
 
 		void Update(){
-			if(bookController.finishToRead && !isDone){
+//			if(bookController.finishToRead && !isDone)
+			{
 				var cellDataIndex = Enumerable.Range(0, bookController.BookDataLength).Select(i => new Example01CellDto { Index = i }).ToList();
 				scrollView.UpdateData(cellDataIndex);
 				isDone = true;

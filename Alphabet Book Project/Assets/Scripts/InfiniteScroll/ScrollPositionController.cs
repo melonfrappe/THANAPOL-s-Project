@@ -204,7 +204,8 @@ namespace UnityEngine.UI.Extensions
 		void Update()
 		{
 			#region SET_CURRENT_INDEX
-			if(bookController.finishToRead){
+//			if(bookController.finishToRead)
+			{
 				bookController.CurrentBookIndex = (int)currentScrollPosition%bookController.BookDataLength;
 				if(bookController.CurrentBookIndex < 0){
 					bookController.CurrentBookIndex += bookController.BookDataLength;
