@@ -5,9 +5,11 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using System.IO;
 using System;
+
 [Serializable]
 public class BookData
 {
+	public string catagory;
     public string bookColor;
     public OnBookCover onBookCover;
     public int pageLength;
@@ -47,6 +49,7 @@ public class JsonHelper
 public class BookController : Singleton<BookController>
 {
     public string GameDataFileName = "BookData.json";
+	public List<string> CatagoryName = new List<string> ();
 
     public Button BackButton;
     public Button DeleteButton;
@@ -60,18 +63,20 @@ public class BookController : Singleton<BookController>
 	public GameObject TopBookShelf;
 	public GameObject MidBookShelf;
 	public GameObject DescriptionPanel;
-	public ResultPanel ResultPanel;
 	public GameObject UnusedObject;
+	public List<GameObject> CatagoryContent = new List<GameObject> ();
+
+	public ResultPanel ResultPanel;
 
 	public Image CoverImageDescription;
 
-    public ScrollRect ScrollRect;
+//    public ScrollRect ScrollRect;
 
     public Book Book;
 
 	public ImageDownloader ImageDownloader;
 
-	public int CatagoryCount,CurrentBookIndex, CloningIndexCounter, BookDataLength, MaxPageLengthEachBook;
+	public int CatagoryAmount,CurrentBookIndex, CloningIndexCounter, BookDataLength, MaxPageLengthEachBook;
 
 	public Sprite[] BookCoverImage;
 
@@ -82,39 +87,44 @@ public class BookController : Singleton<BookController>
 	string[] imageURL;
     string[] curDir;
 
-    float percentage;
-    float[] snapPoint;
-
-    Vector2 beforeSnapPos, afterSnapPos;
-
-    void Start()
-    {
+//    float percentage;
+//    float[] snapPoint;
+//
+//    Vector2 beforeSnapPos, afterSnapPos;
+	void Awake(){
+		//Close the book when play
+		OpeningBook.gameObject.SetActive(false);
 		//TODO: check catagory from json data soon
-	
 		//Get file path
 		string filePath = Path.Combine(GetStreamingPath(), GameDataFileName);
-        //Finding the best way to use one-for-all platform
+		//Finding the best way to use one-for-all platform
 		#if UNITY_EDITOR_OSX
 		string dataAsJson = ReadJsonToString(filePath);
 		#else
 		string dataAsJson = GetDataAsJson(filePath);
 		#endif
-        //Map json file to object in project
-        bookData = JsonHelper.getJsonArray<BookData>(dataAsJson);
-        //Set book data length
-        BookDataLength = bookData.Length;
+		//Map json file to object in project
+		bookData = JsonHelper.getJsonArray<BookData>(dataAsJson);
+		//Set book data length
+		BookDataLength = bookData.Length;
 		//Book cover size
 		BookCoverImage = new Sprite[BookDataLength];
-        //Set current directory size for store each directory name with a book title
-        curDir = new string[BookDataLength];
+		//Set current directory size for store each directory name with a book title
+		curDir = new string[BookDataLength];
+		//Count catagory
+		CountCatagory();
+		//Set book page length size
+		SetBookPageLeght();
+
+	}
+    void Start()
+    {
+		//TODO:CloneShelf() follow a catagory amount
+		CloneShelf();
+        //Cloning into content
+        CloneBook();
 		//Load book cover first
 		LoadBookCover();
-        //Set book page length size
-		SetBookPageLeght();
-        //Close the book when play
-        OpeningBook.gameObject.SetActive(false);
-        //Cloning into content
-        CloneFromBookDataLength();
         //Add listener of back button
 		BackButton.onClick.AddListener(BackToCatalogue);
         //Add listener of delete button
@@ -129,23 +139,27 @@ public class BookController : Singleton<BookController>
                     ImageDownloader.RemoveDirectory(curDir[CurrentBookIndex]);
             }
         });
-		
 //		print (dataAsJson);
 //		print ("Max page length is : " + MaxPageLengthEachBook);
 //		print ("dataPath : " + Application.dataPath);
 //		print ("persistentPath : " + Application.persistentDataPath);
     }
-	void ClearNextBookChild(){
-		for(int i=0; i<ResultPanel.NextBook.childCount; i++)
-			Destroy(ResultPanel.NextBook.GetChild (i).gameObject);
+	void Update(){
+		if(Input.GetKey (KeyCode.Space)){
+			for(int j=0; j<CatagoryContent.Count; j++){
+				print (CatagoryContent[j].GetComponent<MidBookShelf>().Catagory);
+			}
+		}
+
 	}
-	public void BackToCatalogue(){
-		ClearNextBookChild ();
-		CancelSelecting ();
-		Barrier.SetActive(false);
-		OpeningBook.SetActive(false);
-		//Reset to first page when close a book
-		Book.ResetCurrentPage();
+	void CloneShelf(){
+		for(int i=0; i<=CatagoryAmount-BookShelfContent.transform.childCount; i++){
+			GameObject _cloneShelf = Instantiate (MidBookShelf,BookShelfContent.transform);
+		}
+		for(int i=1; i<BookShelfContent.transform.childCount; i++){
+			BookShelfContent.transform.GetChild (i).name = CatagoryName[i-1]+"Shelf";
+			CatagoryContent.Add (BookShelfContent.transform.GetChild(i).gameObject);
+		}
 	}
 	void LoadBookCover(){
 		ImageDownloader.CreateDirectory("_BookCover");
@@ -153,7 +167,6 @@ public class BookController : Singleton<BookController>
 			StartCoroutine(ImageDownloader.Loader(bookData[i].onBookCover.bookCoverImage,"_BookCover",i,BookCoverLoadingCallback,i));
 		}
 	}
-
 	void SetBookPageLeght(){
 		for (int i=0; i < BookDataLength; i++)
 		{
@@ -170,6 +183,31 @@ public class BookController : Singleton<BookController>
 			}
 		}
 	}
+	void CountCatagory(){
+		string tmpCatagory = "";
+		for(int i=0; i<BookDataLength; i++){
+			if (tmpCatagory != bookData [i].catagory) {
+				tmpCatagory = bookData [i].catagory;
+				CatagoryName.Add (tmpCatagory);
+				CatagoryAmount++;
+				print (">>>Catagory#"+CatagoryAmount+" ("+CatagoryName[CatagoryAmount-1]+")");
+			}
+		}
+	}
+	void ClearNextBookChild(){
+		for(int i=0; i<ResultPanel.NextBook.childCount; i++)
+			Destroy(ResultPanel.NextBook.GetChild (i).gameObject);
+	}
+	public void BackToCatalogue(){
+		ClearNextBookChild ();
+		CancelSelecting ();
+		Barrier.SetActive(false);
+		OpeningBook.SetActive(false);
+		//Reset to first page when close a book
+		Book.ResetCurrentPage();
+	}
+
+
 	public void CancelSelecting(){
 		for(int i=0; i<UnusedObject.gameObject.transform.childCount; i++)
 			Destroy(UnusedObject.gameObject.transform.GetChild(i).gameObject);
@@ -181,11 +219,13 @@ public class BookController : Singleton<BookController>
 				iup.color = new Color(1,1,1,0);
 			}
 	}
-	void CloneFromBookDataLength(){
+	void CloneBook(){
 		for (int i = 0; i < BookDataLength; i++)
 		{
 			GameObject clone = Instantiate(MidCoverBook.gameObject, MidBookShelfContent.transform);
-			clone.GetComponent<CloningComponent>().BookIndex = CloningIndexCounter;
+			CloningComponent cc = clone.GetComponent<CloningComponent> ();
+			cc.BookIndex = CloningIndexCounter;
+			cc.Catagory = bookData[i].catagory;
 			CloningIndexCounter++;
 		}
 	}
@@ -201,13 +241,15 @@ public class BookController : Singleton<BookController>
         Barrier.SetActive(true);
 		//clone next book on result panel
 		Transform nextBook = ResultPanel.NextBook.transform;
-		GameObject _cloneNextBook = Instantiate (MidBookShelfContent.transform.GetChild(CurrentBookIndex+1).gameObject,nextBook);
+		//TODO:Correct a next book must select in each catagory
+		GameObject _cloneNextBook = Instantiate (MidBookShelfContent.transform
+			.GetChild((CurrentBookIndex+1)%BookDataLength).gameObject,nextBook);
 
     }
 	void SetBookCover(){
 		int bookIndex=0;
-		var ct = MidBookShelfContent.GetComponentsInChildren<CloningComponent> ();
-		foreach(CloningComponent cc in ct){
+		var msc = MidBookShelfContent.GetComponentsInChildren<CloningComponent> ();
+		foreach(CloningComponent cc in msc){
 			cc.coverImage.sprite = BookCoverImage[bookIndex];
 			cc.coverImage.color = Color.white;
 			//Set color each book
@@ -215,6 +257,15 @@ public class BookController : Singleton<BookController>
 			ColorUtility.TryParseHtmlString (bookData [bookIndex].bookColor,out tmpColor);
 			cc.coverColor.color = tmpColor;
 			bookIndex++;
+			SetBookToThemShelf (cc);
+		}
+	}
+	void SetBookToThemShelf(CloningComponent cc){
+		for(int i=0; i<CatagoryContent.Count; i++){
+			MidBookShelf _MidBookShelf = CatagoryContent[i].GetComponent<MidBookShelf>();
+			if(cc.Catagory == _MidBookShelf.Catagory){
+				cc.transform.SetParent (_MidBookShelf.MidBookShelfContent);
+			}
 		}
 	}
 	void BookCoverLoadingCallback(int index,Sprite spr){
@@ -234,11 +285,9 @@ public class BookController : Singleton<BookController>
 			Book.UpdateSprites();
 		}
 	}
-
 	void LoadSelectedBook()
 	{
 		ImageDownloader.Counter = 0;
-		//Set array size
 		Book.bookPages = new Sprite[BookPageLength[CurrentBookIndex]];
 		Book.pageText = new string[BookPageLength[CurrentBookIndex]];
 		imageURL = new string[bookData[CurrentBookIndex].pageLength];
@@ -257,7 +306,6 @@ public class BookController : Singleton<BookController>
 		yield return new WaitForSeconds (seconds);
 		callback ();
 	}
-
 	#region DataPathMethods
 	public string GetStreamingPath()
 	{
@@ -286,48 +334,48 @@ public class BookController : Singleton<BookController>
 	#endregion
 
 	#region SnappingMethods
-    void SetSnappoint()
-    {
-        //Calculate percentage of scroll view per object
-        snapPoint = new float[BookDataLength];
-        percentage = 1.00f / (BookDataLength - 1);
-        for (int i = 0; i < BookDataLength; i++)
-        {
-            snapPoint[i] = percentage * i;
-        }
-    }
-
-	//Tween In and Out when the book is scrolling thru mid. of display.
-	void TweenInAndOut()
-	{
-		for (int i = 0; i < BookDataLength; i++)
-		{
-			float tmpScale = 1.00f - Mathf.Abs(snapPoint[i] - ScrollRect.horizontalNormalizedPosition);
-			MidBookShelfContent.transform.GetChild(i).transform.localScale = new Vector3(tmpScale, tmpScale, 1);
-		}
-	}
-
-	void SnapToNearestPoint()
-	{
-		//Use 0.01f to check nearest because impossible to use absolute zero of delta
-		for (int i = 0; i < BookDataLength; i++)
-			if (snapPoint[i] - ScrollRect.horizontalNormalizedPosition > 0 && snapPoint[i] - ScrollRect.horizontalNormalizedPosition < 0.01f)
-			{
-				ScrollRect.horizontalNormalizedPosition = snapPoint[i];
-				CurrentBookIndex = i;
-			}
-	}
-
-	public void SnapToPrevNext(int selectedPoint)
-	{
-		//Set position before snap
-		beforeSnapPos = MidBookShelfContent.transform.localPosition;
-		//Snap to selected
-		ScrollRect.horizontalNormalizedPosition = snapPoint[selectedPoint];
-		//Set position after snap
-		afterSnapPos = MidBookShelfContent.transform.localPosition;
-		//Animate
-		MidBookShelfContent.GetComponent<RectTransform>().TweenRectTrans(Siri.Rtype.LocalPosition, Easing.Type.EaseOutQuad, beforeSnapPos, afterSnapPos, 0.25f);
-	}
+//    void SetSnappoint()
+//    {
+//        //Calculate percentage of scroll view per object
+//        snapPoint = new float[BookDataLength];
+//        percentage = 1.00f / (BookDataLength - 1);
+//        for (int i = 0; i < BookDataLength; i++)
+//        {
+//            snapPoint[i] = percentage * i;
+//        }
+//    }
+//
+//	//Tween In and Out when the book is scrolling thru mid. of display.
+//	void TweenInAndOut()
+//	{
+//		for (int i = 0; i < BookDataLength; i++)
+//		{
+//			float tmpScale = 1.00f - Mathf.Abs(snapPoint[i] - ScrollRect.horizontalNormalizedPosition);
+//			MidBookShelfContent.transform.GetChild(i).transform.localScale = new Vector3(tmpScale, tmpScale, 1);
+//		}
+//	}
+//
+//	void SnapToNearestPoint()
+//	{
+//		//Use 0.01f to check nearest because impossible to use absolute zero of delta
+//		for (int i = 0; i < BookDataLength; i++)
+//			if (snapPoint[i] - ScrollRect.horizontalNormalizedPosition > 0 && snapPoint[i] - ScrollRect.horizontalNormalizedPosition < 0.01f)
+//			{
+//				ScrollRect.horizontalNormalizedPosition = snapPoint[i];
+//				CurrentBookIndex = i;
+//			}
+//	}
+//
+//	public void SnapToPrevNext(int selectedPoint)
+//	{
+//		//Set position before snap
+//		beforeSnapPos = MidBookShelfContent.transform.localPosition;
+//		//Snap to selected
+//		ScrollRect.horizontalNormalizedPosition = snapPoint[selectedPoint];
+//		//Set position after snap
+//		afterSnapPos = MidBookShelfContent.transform.localPosition;
+//		//Animate
+//		MidBookShelfContent.GetComponent<RectTransform>().TweenRectTrans(Siri.Rtype.LocalPosition, Easing.Type.EaseOutQuad, beforeSnapPos, afterSnapPos, 0.25f);
+//	}
 	#endregion
 }

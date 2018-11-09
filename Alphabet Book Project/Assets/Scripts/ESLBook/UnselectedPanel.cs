@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class UnselectedPanel : MonoBehaviour {
+	BookController bc;
 
-	// Use this for initialization
 	void Start () {
-		
+		bc = BookController.Instance;
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		
+
+	public void OnClickUnselectedPanel(){
+		bc.CancelSelecting ();
 	}
+
 }

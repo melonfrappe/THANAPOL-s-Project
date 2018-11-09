@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 222726313972963366}
   - component: {fileID: 114485986615473990}
   m_Layer: 5
-  m_Name: Text
+  m_Name: Catagory
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -109,13 +109,14 @@ GameObject:
   - component: {fileID: 222046071070042608}
   - component: {fileID: 114928238498748794}
   - component: {fileID: 114188669472647148}
+  - component: {fileID: 114546305513086842}
   m_Layer: 5
   m_Name: UnselectedPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &1759649748932062
 GameObject:
   m_ObjectHideFlags: 1
@@ -207,8 +208,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: Unselected
+      - m_Target: {fileID: 114546305513086842}
+        m_MethodName: OnClickUnselectedPanel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -374,6 +375,17 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Category
+--- !u!114 &114546305513086842
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1698115612947250}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33a0f6639bdb1f849a0a64351fd7932c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114582827572694346
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -385,10 +397,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 507fa0c11b2f8e642831c27778a9dbe4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CatagoryName: 
+  Catagory: 
+  CatagoryLabel: {fileID: 114485986615473990}
   ShelfIndex: 0
   MidBookShelfContent: {fileID: 224167622130381042}
-  UnselectedPanel: {fileID: 1698115612947250}
 --- !u!114 &114673585364062804
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -493,8 +505,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.5019608}
-  m_RaycastTarget: 1
+  m_Color: {r: 1, g: 1, b: 1, a: 0}
+  m_RaycastTarget: 0
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []

@@ -6,6 +6,7 @@ using UnityEngine.EventSystems;
 using System.IO;
 
 public class CloningComponent : MonoBehaviour {
+	public string Catagory;
 	public int BookIndex;
 	public List <Sprite> tmpPage = new List<Sprite>();
 	public bool snapToSelectingBook = false;
@@ -39,6 +40,7 @@ public class CloningComponent : MonoBehaviour {
 			bc.DescriptionPanel.SetActive(true);
 			bc.CoverImageDescription.sprite = bc.BookCoverImage[bc.CurrentBookIndex];
 		});
+
 	}
 
 	public void SetIsSelected(){
@@ -49,6 +51,16 @@ public class CloningComponent : MonoBehaviour {
 		}
 		Siri.TweenExtensions.Transform (clone.GetComponent<RectTransform>(), Siri.Rtype.Scale, clone.transform.localScale, new Vector2 (1.2f, 1.2f), 0.5f, 0, Easing.Type.EaseOutBounce);
 
+	}
+
+	void Update(){
+		if(Input.GetKey(KeyCode.Space))
+			for(int i=0; i<bc.CatagoryContent.Count; i++){
+				print (bc.CatagoryContent[i].GetComponent<MidBookShelf>().Catagory);
+				if(Catagory == bc.CatagoryContent[i].GetComponent<MidBookShelf>().Catagory){
+					transform.SetParent (bc.CatagoryContent[i].GetComponent<MidBookShelf>().MidBookShelfContent);
+				}
+			}
 	}
 
 }
