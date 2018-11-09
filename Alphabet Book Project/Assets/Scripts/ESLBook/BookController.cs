@@ -61,6 +61,7 @@ public class BookController : Singleton<BookController>
 	public GameObject MidBookShelf;
 	public GameObject DescriptionPanel;
 	public GameObject ResultPanel;
+	public GameObject UnusedObject;
 
 	public Image CoverImageDescription;
 
@@ -135,9 +136,9 @@ public class BookController : Singleton<BookController>
 //		print ("persistentPath : " + Application.persistentDataPath);
     }
 	public void BackToCatalogue(){
-		Unselected ();
-		Barrier.gameObject.SetActive(false);
-		OpeningBook.gameObject.SetActive(false);
+		CancelSelecting ();
+		Barrier.SetActive(false);
+		OpeningBook.SetActive(false);
 		//Reset to first page when close a book
 		Book.ResetCurrentPage();
 	}
@@ -164,10 +165,16 @@ public class BookController : Singleton<BookController>
 			}
 		}
 	}
-	public void Unselected(){
-		for(int i=0; i<UnselectedPanel.gameObject.transform.childCount; i++)
-			Destroy(UnselectedPanel.gameObject.transform.GetChild(i).gameObject);
-		UnselectedPanel.gameObject.SetActive(false);
+	public void CancelSelecting(){
+		for(int i=0; i<UnusedObject.gameObject.transform.childCount; i++)
+			Destroy(UnusedObject.gameObject.transform.GetChild(i).gameObject);
+		// UnselectedPanel.gameObject.SetActive(false);
+		var bsc= BookShelfContent.GetComponentsInChildren<UnselectedPanel>();
+			foreach(UnselectedPanel up in bsc){
+				Image iup = up.GetComponent<Image>();
+				iup.raycastTarget = false;
+				iup.color = new Color(1,1,1,0);
+			}
 	}
 	void CloneFromBookDataLength(){
 		for (int i = 0; i < BookDataLength; i++)
@@ -183,7 +190,7 @@ public class BookController : Singleton<BookController>
         //Initiate to first download of selected book is clicked
         LoadSelectedBook();
         //To blur bg
-        Barrier.gameObject.SetActive(true);
+        Barrier.SetActive(true);
 		//clone next book on result panel
 		Transform nextBook = ResultPanel.GetComponent<ResultPanel>().NextBook.transform;
 		GameObject _cloneNextBook = Instantiate (MidBookShelfContent.transform.GetChild(CurrentBookIndex+1).gameObject,nextBook);

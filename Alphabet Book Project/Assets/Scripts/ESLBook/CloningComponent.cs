@@ -22,7 +22,13 @@ public class CloningComponent : MonoBehaviour {
 		id = ImageDownloader.Instance;
 		//Add button listener
 		coverButton.onClick.AddListener (()=>{
-			bc.UnselectedPanel.gameObject.SetActive(true);
+			// bc.UnselectedPanel.gameObject.SetActive(true);
+			var bsc= bc.BookShelfContent.GetComponentsInChildren<UnselectedPanel>();
+			foreach(UnselectedPanel up in bsc){
+				Image iup = up.GetComponent<Image>();
+				iup.raycastTarget = true;
+				iup.color = new Color(1,1,1,0.5f);
+			}
 			bc.CurrentBookIndex = BookIndex;
 			SetIsSelected();
 		});
@@ -36,7 +42,7 @@ public class CloningComponent : MonoBehaviour {
 	}
 
 	public void SetIsSelected(){
-		GameObject clone = Instantiate(this.gameObject,bc.UnselectedPanel.transform,true);
+		GameObject clone = Instantiate(this.gameObject,bc.UnusedObject.transform,true);
 		for(int i=0; i<clone.transform.childCount; i++){
 			if(!clone.transform.GetChild (i).gameObject.activeInHierarchy)
 				clone.transform.GetChild (i).gameObject.SetActive(true);

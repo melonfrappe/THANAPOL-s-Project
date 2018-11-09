@@ -72,6 +72,7 @@ GameObject:
   - component: {fileID: 224559659936473814}
   - component: {fileID: 222844277315936350}
   - component: {fileID: 114192023222755830}
+  - component: {fileID: 114582827572694346}
   m_Layer: 5
   m_Name: MidBookShelf
   m_TagString: Untagged
@@ -360,7 +361,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
-    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_Font: {fileID: 12800000, guid: 29721cd0e38ec4888b86d5c02237ffa4, type: 3}
     m_FontSize: 14
     m_FontStyle: 0
     m_BestFit: 1
@@ -373,6 +374,21 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Category
+--- !u!114 &114582827572694346
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1476369570158736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 507fa0c11b2f8e642831c27778a9dbe4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CatagoryName: 
+  ShelfIndex: 0
+  MidBookShelfContent: {fileID: 224167622130381042}
+  UnselectedPanel: {fileID: 1698115612947250}
 --- !u!114 &114673585364062804
 MonoBehaviour:
   m_ObjectHideFlags: 1
