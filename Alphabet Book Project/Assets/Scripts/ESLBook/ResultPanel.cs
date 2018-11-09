@@ -21,10 +21,17 @@ public class ResultPanel :  Singleton<ResultPanel> {
 			bc.CurrentBookIndex = (bc.CurrentBookIndex+1)%bc.BookDataLength;
 			bc.OpeningBook.SetActive(false);
 			bc.OpenBook();
+
 		});
 		ReplayButton.onClick.AddListener (()=>{
-			bc.OpenBook();
 			gameObject.SetActive(false);
+			bc.OpenBook();
+
 		});
+	}
+
+	void OnDisable(){
+		for(int i=0; i<NextBook.childCount; i++)
+			Destroy(NextBook.GetChild (i).gameObject);
 	}
 }

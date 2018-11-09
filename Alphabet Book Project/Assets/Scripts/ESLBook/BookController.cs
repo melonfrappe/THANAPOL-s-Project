@@ -60,7 +60,7 @@ public class BookController : Singleton<BookController>
 	public GameObject TopBookShelf;
 	public GameObject MidBookShelf;
 	public GameObject DescriptionPanel;
-	public GameObject ResultPanel;
+	public ResultPanel ResultPanel;
 	public GameObject UnusedObject;
 
 	public Image CoverImageDescription;
@@ -135,7 +135,12 @@ public class BookController : Singleton<BookController>
 //		print ("dataPath : " + Application.dataPath);
 //		print ("persistentPath : " + Application.persistentDataPath);
     }
+	void ClearNextBookChild(){
+		for(int i=0; i<ResultPanel.NextBook.childCount; i++)
+			Destroy(ResultPanel.NextBook.GetChild (i).gameObject);
+	}
 	public void BackToCatalogue(){
+		ClearNextBookChild ();
 		CancelSelecting ();
 		Barrier.SetActive(false);
 		OpeningBook.SetActive(false);
@@ -186,13 +191,16 @@ public class BookController : Singleton<BookController>
 	}
     public void OpenBook()
     {
+		//reset selected when open a book
+		CancelSelecting ();
+		//reset book page
 		Book.ResetCurrentPage();
         //Initiate to first download of selected book is clicked
         LoadSelectedBook();
         //To blur bg
         Barrier.SetActive(true);
 		//clone next book on result panel
-		Transform nextBook = ResultPanel.GetComponent<ResultPanel>().NextBook.transform;
+		Transform nextBook = ResultPanel.NextBook.transform;
 		GameObject _cloneNextBook = Instantiate (MidBookShelfContent.transform.GetChild(CurrentBookIndex+1).gameObject,nextBook);
 
     }
