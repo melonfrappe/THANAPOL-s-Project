@@ -16,14 +16,12 @@ public class CloningComponent : MonoBehaviour {
 	public Image coverImage;
 	public Image coverColor;
 	BookController bc;
-	ImageDownloader id;
 
 	void Start(){
 		bc = BookController.Instance;
-		id = ImageDownloader.Instance;
-		//Add button listener
 		coverButton.onClick.AddListener (()=>{
-			// bc.UnselectedPanel.gameObject.SetActive(true);
+			bc.NextBookIndex = (this.transform.GetSiblingIndex()+1)%this.transform.parent.transform.childCount;
+			bc.Barrier.SetActive(true);
 			var bsc= bc.BookShelfContent.GetComponentsInChildren<UnselectedPanel>();
 			foreach(UnselectedPanel up in bsc){
 				Image iup = up.GetComponent<Image>();
@@ -40,7 +38,6 @@ public class CloningComponent : MonoBehaviour {
 			bc.DescriptionPanel.SetActive(true);
 			bc.CoverImageDescription.sprite = bc.BookCoverImage[bc.CurrentBookIndex];
 		});
-
 	}
 
 	public void SetIsSelected(){
@@ -50,17 +47,5 @@ public class CloningComponent : MonoBehaviour {
 				clone.transform.GetChild (i).gameObject.SetActive(true);
 		}
 		Siri.TweenExtensions.Transform (clone.GetComponent<RectTransform>(), Siri.Rtype.Scale, clone.transform.localScale, new Vector2 (1.2f, 1.2f), 0.5f, 0, Easing.Type.EaseOutBounce);
-
 	}
-
-	void Update(){
-		if(Input.GetKey(KeyCode.Space))
-			for(int i=0; i<bc.CatagoryContent.Count; i++){
-				print (bc.CatagoryContent[i].GetComponent<MidBookShelf>().Catagory);
-				if(Catagory == bc.CatagoryContent[i].GetComponent<MidBookShelf>().Catagory){
-					transform.SetParent (bc.CatagoryContent[i].GetComponent<MidBookShelf>().MidBookShelfContent);
-				}
-			}
-	}
-
 }

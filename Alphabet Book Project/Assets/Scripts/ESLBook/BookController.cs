@@ -11,11 +11,9 @@ public class BookData
 {
 	public string catagory;
     public string bookColor;
-    public OnBookCover onBookCover;
     public int pageLength;
     public BookPage[] bookPage;
-	public string textAnchor;
-	public string textColor;
+	public OnBookCover onBookCover;
 }
 [Serializable]
 public class BookPage
@@ -76,7 +74,7 @@ public class BookController : Singleton<BookController>
 
 	public ImageDownloader ImageDownloader;
 
-	public int CatagoryAmount,CurrentBookIndex, CloningIndexCounter, BookDataLength, MaxPageLengthEachBook;
+	public int CatagoryAmount,CurrentBookIndex,CloningIndexCounter,BookDataLength,MaxPageLengthEachBook,NextBookIndex;
 
 	public Sprite[] BookCoverImage;
 
@@ -119,15 +117,13 @@ public class BookController : Singleton<BookController>
 	}
     void Start()
     {
-		//TODO:CloneShelf() follow a catagory amount
+		//Initialization
 		CloneShelf();
-        //Cloning into content
         CloneBook();
-		//Load book cover first
 		LoadBookCover();
-        //Add listener of back button
+
+        //Add listener
 		BackButton.onClick.AddListener(BackToCatalogue);
-        //Add listener of delete button
         DeleteButton.onClick.AddListener(() =>
         {
             for (int i = 0; i <= BookPageLength[CurrentBookIndex]; i++)
@@ -144,17 +140,11 @@ public class BookController : Singleton<BookController>
 //		print ("dataPath : " + Application.dataPath);
 //		print ("persistentPath : " + Application.persistentDataPath);
     }
-	void Update(){
-		if(Input.GetKey (KeyCode.Space)){
-			for(int j=0; j<CatagoryContent.Count; j++){
-				print (CatagoryContent[j].GetComponent<MidBookShelf>().Catagory);
-			}
-		}
 
-	}
 	void CloneShelf(){
-		for(int i=0; i<=CatagoryAmount-BookShelfContent.transform.childCount; i++){
-			GameObject _cloneShelf = Instantiate (MidBookShelf,BookShelfContent.transform);
+		int tmpChildCount = BookShelfContent.transform.childCount;
+		for(int i=0; i<=CatagoryAmount- tmpChildCount; i++){
+			Instantiate (MidBookShelf,BookShelfContent.transform);
 		}
 		for(int i=1; i<BookShelfContent.transform.childCount; i++){
 			BookShelfContent.transform.GetChild (i).name = CatagoryName[i-1]+"Shelf";
@@ -190,7 +180,7 @@ public class BookController : Singleton<BookController>
 				tmpCatagory = bookData [i].catagory;
 				CatagoryName.Add (tmpCatagory);
 				CatagoryAmount++;
-				print (">>>Catagory#"+CatagoryAmount+" ("+CatagoryName[CatagoryAmount-1]+")");
+				print ("Catagory #"+CatagoryAmount+" ("+CatagoryName[CatagoryAmount-1]+")");
 			}
 		}
 	}
@@ -211,7 +201,6 @@ public class BookController : Singleton<BookController>
 	public void CancelSelecting(){
 		for(int i=0; i<UnusedObject.gameObject.transform.childCount; i++)
 			Destroy(UnusedObject.gameObject.transform.GetChild(i).gameObject);
-		// UnselectedPanel.gameObject.SetActive(false);
 		var bsc= BookShelfContent.GetComponentsInChildren<UnselectedPanel>();
 			foreach(UnselectedPanel up in bsc){
 				Image iup = up.GetComponent<Image>();
@@ -242,17 +231,20 @@ public class BookController : Singleton<BookController>
 		//clone next book on result panel
 		Transform nextBook = ResultPanel.NextBook.transform;
 		//TODO:Correct a next book must select in each catagory
-		GameObject _cloneNextBook = Instantiate (MidBookShelfContent.transform
-			.GetChild((CurrentBookIndex+1)%BookDataLength).gameObject,nextBook);
+		for(int i=0; i<CatagoryContent.Count; i++){
+			//loop find a shelf which current book is in
+			if(bookData[CurrentBookIndex].catagory == CatagoryContent[i].GetComponent<MidBookShelf>().Catagory)
+				Instantiate (CatagoryContent[i].GetComponent<MidBookShelf>()
+					.MidBookShelfContent.GetChild(NextBookIndex).gameObject,nextBook);
+		}
 
     }
 	void SetBookCover(){
 		int bookIndex=0;
-		var msc = MidBookShelfContent.GetComponentsInChildren<CloningComponent> ();
-		foreach(CloningComponent cc in msc){
+		var _midBookShelfContent = MidBookShelfContent.GetComponentsInChildren<CloningComponent> ();
+		foreach(CloningComponent cc in _midBookShelfContent){
 			cc.coverImage.sprite = BookCoverImage[bookIndex];
 			cc.coverImage.color = Color.white;
-			//Set color each book
 			Color tmpColor = new Color();
 			ColorUtility.TryParseHtmlString (bookData [bookIndex].bookColor,out tmpColor);
 			cc.coverColor.color = tmpColor;
@@ -262,9 +254,9 @@ public class BookController : Singleton<BookController>
 	}
 	void SetBookToThemShelf(CloningComponent cc){
 		for(int i=0; i<CatagoryContent.Count; i++){
-			MidBookShelf _MidBookShelf = CatagoryContent[i].GetComponent<MidBookShelf>();
-			if(cc.Catagory == _MidBookShelf.Catagory){
-				cc.transform.SetParent (_MidBookShelf.MidBookShelfContent);
+			MidBookShelf _midBookShelf = CatagoryContent[i].GetComponent<MidBookShelf>();
+			if(cc.Catagory == _midBookShelf.Catagory){
+				cc.transform.SetParent (_midBookShelf.MidBookShelfContent);
 			}
 		}
 	}

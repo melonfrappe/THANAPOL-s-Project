@@ -105,7 +105,6 @@ public class Book : MonoBehaviour {
         //RectTransformUtility.ScreenPointToLocalPointInRectangle(BookPanel, global, null, out localPos);
         return localPos;
     }
-	bool toggle=true;
     void Update()
     {
         if (pageDragging&&interactable)

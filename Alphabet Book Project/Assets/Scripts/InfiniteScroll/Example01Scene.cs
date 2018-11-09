@@ -7,20 +7,9 @@ namespace UnityEngine.UI.Extensions.Examples
         [SerializeField] Example01ScrollView scrollView;
 		[SerializeField] BookController bookController;
 
-		bool isDone = false;
-
-        void Start()
-        {
-            
-        }
-
 		void Update(){
-//			if(bookController.finishToRead && !isDone)
-			{
-				var cellDataIndex = Enumerable.Range(0, bookController.BookDataLength).Select(i => new Example01CellDto { Index = i }).ToList();
-				scrollView.UpdateData(cellDataIndex);
-				isDone = true;
-			}
+			var cellDataIndex = Enumerable.Range(0, bookController.BookDataLength).Select(i => new Example01CellDto { Index = i }).ToList();
+			scrollView.UpdateData(cellDataIndex);
 
 		}
     }

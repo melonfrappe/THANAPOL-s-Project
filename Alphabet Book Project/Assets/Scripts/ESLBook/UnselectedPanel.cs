@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UnselectedPanel : MonoBehaviour {
 	BookController bc;
@@ -9,8 +10,8 @@ public class UnselectedPanel : MonoBehaviour {
 		bc = BookController.Instance;
 	}
 
-	public void OnClickUnselectedPanel(){
+	public void OnClick(){
 		bc.CancelSelecting ();
+		gameObject.SetActive (false);
 	}
-
 }
