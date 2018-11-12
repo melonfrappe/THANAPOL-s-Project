@@ -1,10 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class SearchingBook : MonoBehaviour ,IPointerEnterHandler,IPointerExitHandler{
+public class SearchingBook : MonoBehaviour {
 	[SerializeField] Button BookCoverButton;
 	[SerializeField] Button PlayButton;
 	[SerializeField] Button DescriptionButton;
@@ -15,9 +14,17 @@ public class SearchingBook : MonoBehaviour ,IPointerEnterHandler,IPointerExitHan
 	void Start(){
 		bc = BookController.Instance;
 		BookCoverButton.onClick.AddListener (()=>{
-//			bc.CurrentBookIndex = SearchingBookIndex;
-//			PlayButton.gameObject.SetActive(true);
-//			DescriptionButton.gameObject.SetActive(true);
+			bc.CurrentBookIndex = SearchingBookIndex;
+			PlayButton.gameObject.SetActive(true);
+			DescriptionButton.gameObject.SetActive(true);
+
+			var sp = bc.SearchingPanel.HorizontalContent.gameObject.GetComponentsInChildren<SearchingBook>();
+			foreach(SearchingBook sb in sp){
+				if(sb.SearchingBookIndex!=this.SearchingBookIndex){
+					sb.PlayButton.gameObject.SetActive(false);
+					sb.DescriptionButton.gameObject.SetActive(false);
+				}
+			}
 		});
 		PlayButton.onClick.AddListener (()=>{
 			bc.OpenBook();
@@ -26,19 +33,6 @@ public class SearchingBook : MonoBehaviour ,IPointerEnterHandler,IPointerExitHan
 			bc.DescriptionPanel.SetActive(true);
 			bc.CoverImageDescription.sprite = bc.BookCoverImage[bc.CurrentBookIndex];
 		});
-	}
-
-	public void OnPointerEnter(PointerEventData pointerEventData)
-	{
-		bc.CurrentBookIndex = SearchingBookIndex;
-		PlayButton.gameObject.SetActive (true);
-		DescriptionButton.gameObject.SetActive(true);
-	}
-
-	public void OnPointerExit(PointerEventData pointerEventData)
-	{
-		PlayButton.gameObject.SetActive (false);
-		DescriptionButton.gameObject.SetActive(false);
 	}
 
 }
