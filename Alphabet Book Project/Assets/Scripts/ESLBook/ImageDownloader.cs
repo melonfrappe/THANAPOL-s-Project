@@ -23,7 +23,6 @@ public class ImageDownloader : Singleton<ImageDownloader> {
 		}
 		else {
 			//File doesn't exist, need to download
-			//Set flag in selected book (clone) that first time download
 			WWW www = new WWW(url);
 			yield return www;
 			Texture2D texture = www.texture;

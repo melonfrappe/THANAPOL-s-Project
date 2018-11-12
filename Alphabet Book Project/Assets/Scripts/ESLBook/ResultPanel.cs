@@ -9,6 +9,7 @@ public class ResultPanel :  Singleton<ResultPanel> {
 	public Button ReplayButton;
 	public Image NextBookTemplate;
 	public Image NextBookCoverImage;
+	public Text NextBookName;
 	BookController bc;
 	void Start () {
 		bc = BookController.Instance;
@@ -31,8 +32,4 @@ public class ResultPanel :  Singleton<ResultPanel> {
 		});
 	}
 
-	// void OnDisable(){
-	// 	for(int i=0; i<NextBook.childCount; i++)
-	// 		Destroy(NextBook.GetChild (i).gameObject);
-	// }
 }

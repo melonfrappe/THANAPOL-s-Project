@@ -7,6 +7,7 @@ public class MidBookShelf : MonoBehaviour {
 	public Text CatagoryLabel;
 	public int ShelfIndex;
 	public Transform MidBookShelfContent;
+	public GameObject SideScroll;
 	BookController bc;
 
 	void Start () {

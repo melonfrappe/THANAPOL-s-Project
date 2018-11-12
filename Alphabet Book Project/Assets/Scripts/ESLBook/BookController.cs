@@ -46,13 +46,6 @@ public class JsonHelper
 
 public class BookController : Singleton<BookController>
 {
-    public string GameDataFileName = "BookData.json";
-	public List<string> CatagoryName = new List<string> ();
-
-    public Button BackButton;
-    public Button DeleteButton;
-	public Button UnselectedPanel;
-
 	public GameObject MidCoverBook;
 	public GameObject BookShelfContent;
 	public GameObject MidBookShelfContent;
@@ -62,39 +55,50 @@ public class BookController : Singleton<BookController>
 	public GameObject MidBookShelf;
 	public GameObject DescriptionPanel;
 	public GameObject UnusedObject;
+	public GameObject SideScroll;
+	public GameObject BookShelfPanel;
 	public List<GameObject> CatagoryContent = new List<GameObject> ();
 
+	public Button BackButton;
+	public Button DeleteButton;
+	public Button UnselectedPanel;
+	public Button SearchingLabel;
+
 	public ResultPanel ResultPanel;
+	public SearchingPanel SearchingPanel;
+	public Book Book;
+	public ImageDownloader ImageDownloader;
 
 	public Image CoverImageDescription;
 
-    public Book Book;
-
-	public ImageDownloader ImageDownloader;
-
-	public int CatagoryAmount,CurrentBookIndex,CloningIndexCounter,BookDataLength,MaxPageLengthEachBook,NextBookIndex;
-
 	public Sprite[] BookCoverImage;
-
-	public List<int> BookPageLength = new List<int>();
 
     public BookData[] bookData;
 
+	public string GameDataFileName = "BookData.json";
+	public List<string> CatagoryName = new List<string> ();
+
+	public int CatagoryAmount,CurrentBookIndex,CloningIndexCounter,BookDataLength,MaxPageLengthEachBook,NextBookIndex;
+	public List<int> BookPageLength = new List<int>();
+
 	string[] imageURL;
-    string[] curDir;
+	string[] directoriesName;
 
 	void Awake(){
+		//close a book always play
 		OpeningBook.gameObject.SetActive(false);
+
 		string filePath = Path.Combine(GetStreamingPath(), GameDataFileName);
 		#if UNITY_EDITOR_OSX
 		string dataAsJson = ReadJsonToString(filePath);
 		#else
 		string dataAsJson = GetDataAsJson(filePath);
 		#endif
+
 		bookData = JsonHelper.getJsonArray<BookData>(dataAsJson);
 		BookDataLength = bookData.Length;
 		BookCoverImage = new Sprite[BookDataLength];
-		curDir = new string[BookDataLength];
+		directoriesName = new string[BookDataLength];
 
 		//Initialization
 		CountCatagory();
@@ -114,11 +118,15 @@ public class BookController : Singleton<BookController>
             for (int i = 0; i <= BookPageLength[CurrentBookIndex]; i++)
             {
                 if (i < BookPageLength[CurrentBookIndex])
-                    ImageDownloader.DeleteFile(curDir[CurrentBookIndex], i);
+                    ImageDownloader.DeleteFile(directoriesName[CurrentBookIndex], i);
                 else
-                    ImageDownloader.RemoveDirectory(curDir[CurrentBookIndex]);
+                    ImageDownloader.RemoveDirectory(directoriesName[CurrentBookIndex]);
             }
         });
+		SearchingLabel.onClick.AddListener (()=>{
+			SearchingPanel.gameObject.SetActive(true);
+			BookShelfPanel.SetActive(false);
+		});
     }
 
 	void CloneShelf(){
@@ -162,18 +170,15 @@ public class BookController : Singleton<BookController>
 			}
 		}
 	}
-	// void ClearNextBookChild(){
-	// 	for(int i=0; i<ResultPanel.NextBook.childCount; i++)
-	// 		Destroy(ResultPanel.NextBook.GetChild (i).gameObject);
-	// }
+
 	public void BackToCatalogue(){
-		// ClearNextBookChild ();
 		CancelSelecting ();
 		Barrier.SetActive(false);
 		OpeningBook.SetActive(false);
 		Book.ResetCurrentPage();
+		SearchingPanel.gameObject.SetActive (false);
+		BookShelfPanel.SetActive(true);
 	}
-
 
 	public void CancelSelecting(){
 		for(int i=0; i<UnusedObject.gameObject.transform.childCount; i++)
@@ -205,14 +210,8 @@ public class BookController : Singleton<BookController>
 		ColorUtility.TryParseHtmlString (bookData [(CurrentBookIndex+1)%BookDataLength].bookColor,out tmpColor);
 		ResultPanel.NextBookTemplate.color = tmpColor;
 		ResultPanel.NextBookCoverImage.sprite = BookCoverImage[(CurrentBookIndex+1)%BookDataLength];
+		ResultPanel.NextBookName.text = bookData [(CurrentBookIndex + 1) % BookDataLength].onBookCover.bookTitle;
 
-		//Transform nextBook = ResultPanel.NextBook.transform;
-		// for(int i=0; i<CatagoryContent.Count; i++){
-		// 	//loop find a shelf which current book is in
-		// 	if(bookData[CurrentBookIndex].catagory == CatagoryContent[i].GetComponent<MidBookShelf>().Catagory)
-		// 		Instantiate (CatagoryContent[i].GetComponent<MidBookShelf>()
-		// 			.MidBookShelfContent.GetChild((CurrentBookIndex+1)%BookDataLength).gameObject,nextBook);
-		// }
     }
 	void SetBookCover(){
 		int bookIndex=0;
@@ -232,6 +231,12 @@ public class BookController : Singleton<BookController>
 			MidBookShelf _midBookShelf = CatagoryContent[i].GetComponent<MidBookShelf>();
 			if(cc.Catagory == _midBookShelf.Catagory){
 				cc.transform.SetParent (_midBookShelf.MidBookShelfContent);
+			}
+			if(MidBookShelf.transform.childCount>=5){
+				SideScroll.SetActive (true);
+			}
+			if(_midBookShelf.MidBookShelfContent.childCount>=5){
+				_midBookShelf.SideScroll.SetActive (true);
 			}
 		}
 	}
@@ -258,14 +263,15 @@ public class BookController : Singleton<BookController>
 		Book.bookPages = new Sprite[BookPageLength[CurrentBookIndex]];
 		Book.pageText = new string[BookPageLength[CurrentBookIndex]];
 		imageURL = new string[bookData[CurrentBookIndex].pageLength];
-		curDir[CurrentBookIndex] = bookData[CurrentBookIndex].onBookCover.bookTitle;
+		directoriesName[CurrentBookIndex] = bookData[CurrentBookIndex].onBookCover.bookTitle;
 
-		ImageDownloader.CreateDirectory(curDir[CurrentBookIndex]);
+		ImageDownloader.CreateDirectory(directoriesName[CurrentBookIndex]);
 		for (int i = 0; i < bookData[CurrentBookIndex].pageLength; i++)
 		{
 			Book.pageText [i] = bookData [CurrentBookIndex].bookPage [i].bookContent;
 			imageURL[i] = bookData[CurrentBookIndex].bookPage[i].bookPageImage;
-			StartCoroutine(ImageDownloader.Loader(imageURL[i], curDir[CurrentBookIndex], i, BookPageLoadingCallback, CurrentBookIndex));
+			// value 'i' is file name in folder, order from page number
+			StartCoroutine(ImageDownloader.Loader(imageURL[i], directoriesName[CurrentBookIndex], i, BookPageLoadingCallback, CurrentBookIndex));
 		}
 	}
 	public IEnumerator WaitForCallback(float seconds,Action callback){
@@ -281,7 +287,7 @@ public class BookController : Singleton<BookController>
 		return "jar:file://" + Application.dataPath + "!/assets/";
 		#endif
 	}
-    //Work on all platfrom except OSX
+    //working on window editor, android building
     public string GetDataAsJson(string filePath)
     {
         WWW reader = new WWW(filePath);
@@ -289,7 +295,7 @@ public class BookController : Singleton<BookController>
 		}
 		return reader.text;
     }
-    //Use for OSX
+    //for OSX editor
     public string ReadJsonToString(string filePath)
     {
         using (StreamReader reader = new StreamReader(filePath))

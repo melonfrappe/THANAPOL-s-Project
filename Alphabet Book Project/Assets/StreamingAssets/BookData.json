@@ -48,9 +48,7 @@
                 "bookPageImage": "https://preview.ibb.co/cOKTve/9.jpg",
                 "bookContent": "Astronaut and alligator, They also start with A. But an alligator astronaut? I think I’d laugh all day."
             }
-        ],
-        "textAnchor" : "LowerCenter",
-        "textColor" : "#000000"
+        ]
 
     },
     {
@@ -103,9 +101,7 @@
                 "bookContent": "Anyway, that’s it for B,Do you know which letter is number 3?"
             }
             
-        ],
-        "textAnchor" : "UpperCenter",
-        "textColor" : "#FFFFFF"
+        ]
     },
     {
         "catagory": "Alphabet",
@@ -150,9 +146,7 @@
             }
             
             
-        ],
-        "textAnchor" : "LowerCenter",
-        "textColor" : "#FFFFFF"
+        ]
     },
     {
         "catagory": "Alphabet",
@@ -197,9 +191,7 @@
             }
             
             
-        ],
-        "textAnchor" : "UpperCenter",
-        "textColor" : "#000000"
+        ]
     },
     {
         "catagory": "Alphabet",
@@ -244,9 +236,7 @@
             }
             
             
-        ],
-        "textAnchor" : "LowerCenter",
-        "textColor" : "#000000"
+        ]
     },
     {
         "catagory": "Alphabet",
@@ -291,9 +281,7 @@
             }
             
             
-        ],
-        "textAnchor" : "LowerCenter",
-        "textColor" : "#000000"
+        ]
     },
     {
         "catagory": "Alphabet",
@@ -338,9 +326,7 @@
             }
             
             
-        ],
-        "textAnchor" : "LowerCenter",
-        "textColor" : "#000000"
+        ]
     },
     {
         "catagory": "Alphabet",
@@ -389,9 +375,7 @@
             }
             
             
-        ],
-        "textAnchor" : "LowerCenter",
-        "textColor" : "#000000"
+        ]
     },
     {
         "catagory": "Alphabet",
@@ -440,12 +424,10 @@
             }
             
             
-        ],
-        "textAnchor" : "LowerCenter",
-        "textColor" : "#000000"
+        ]
     },
     {
-        "catagory": "Others",
+        "catagory": "Physics",
         "bookColor": "#FF8600",
         "onBookCover": {
             "bookCoverImage": "https://preview.ibb.co/n4iQq9/J_j_02.jpg" ,
@@ -491,13 +473,11 @@
             }
             
             
-        ],
-        "textAnchor" : "LowerCenter",
-        "textColor" : "#000000"
+        ]
     }
     ,
     {
-        "catagory": "Others",
+        "catagory": "Maths",
         "bookColor": "#FF0078",
         "onBookCover": {
             "bookCoverImage": "https://preview.ibb.co/fF1mV9/J_j_03.jpg" ,
@@ -543,8 +523,6 @@
             }
             
             
-        ],
-        "textAnchor" : "LowerCenter",
-        "textColor" : "#000000"
+        ]
     }
 ]
